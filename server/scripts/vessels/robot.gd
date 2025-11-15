@@ -180,8 +180,8 @@ func parseJson(string):
 # Toby Fox ahh function
 func parseAction(string):
 	var json = parseJson(string)
-	if int(json.action) >= playerState.actions.size():
-		print("Robot %s was lobotomized" % id)
+	if !json.has("action") or int(json.action) >= playerState.actions.size():
+		print("Robot %s was lobotomized: %s" % [id, json])
 	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
@@ -251,7 +251,7 @@ func _process(delta: float) -> void:
 
 				updateState()
 
-				print("acting now!")
+				print("Robot %s acting now!" % id)
 				idle = false
 				parseAction(await action(playerState))
 				idle = true
