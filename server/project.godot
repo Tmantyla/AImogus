@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="AImogus"
+config/name="AImogus server"
 run/main_scene="uid://c6pi5ejtme0m4"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
@@ -18,3 +18,4 @@ config/icon="res://icon.svg"
 [autoload]
 
 ServerUtilities="*res://scripts/server_utilities.gd"
+ServerHost="*res://scripts/server_host.gd"

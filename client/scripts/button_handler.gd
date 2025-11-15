@@ -16,6 +16,7 @@ func _on_button_pressed(btn, category):
 		_swap_scene("res://scenes/gameplay/vending_machine.tscn", btn.name)
 	if category.name == "Back":
 		_swap_scene("res://scenes/gameplay/station.tscn", btn.name)
+		ServerHost.send_event("player_moved", {"pos": Vector2(10,5)})
 	if category.name == "VendingMachineActions":
 		if btn.name == "Fix":
 			var scene := preload("res://scenes/ui/minigame_fix.tscn")

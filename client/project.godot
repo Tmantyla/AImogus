@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="AImogus"
+config/name="AImogus client"
 run/main_scene="uid://cyqd17yqbl36l"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
@@ -19,3 +19,4 @@ config/icon="res://icon.svg"
 
 ButtonHandler="*res://scripts/button_handler.gd"
 Chatbox="*res://scenes/ui/chatbox.tscn"
+ServerHost="*res://scripts/network.gd"
