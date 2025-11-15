@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://b85d40bax4omd"]
+
+[ext_resource type="Script" uid="uid://byeaidufv0iqi" path="res://client/scenes/ui/minigame_restock.gd" id="1_8vt0o"]
+[ext_resource type="Texture2D" uid="uid://c4whxtrjwsu64" path="res://client/assets/placeholder/restock.jpg" id="1_mda3u"]
+
+[node name="MinigameRestock" type="CanvasLayer"]
+script = ExtResource("1_8vt0o")
+
+[node name="Restock" type="Sprite2D" parent="."]
+position = Vector2(577, 322)
+scale = Vector2(0.524615, 1.01309)
+texture = ExtResource("1_mda3u")

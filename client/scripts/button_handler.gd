@@ -16,6 +16,15 @@ func _on_button_pressed(btn, category):
 		_swap_scene("res://client/scenes/gameplay/vending_machine.tscn", btn.name)
 	if category.name == "Back":
 		_swap_scene("res://client/scenes/gameplay/station.tscn", btn.name)
+	if category.name == "VendingMachineActions":
+		if btn.name == "Fix":
+			var scene := preload("res://client/scenes/ui/minigame_fix.tscn")
+			var inst := scene.instantiate()
+			add_child(inst)
+		if btn.name == "Restock":
+			var scene := preload("res://client/scenes/ui/minigame_restock.tscn")
+			var inst := scene.instantiate()
+			add_child(inst)
 
 func _swap_scene(path: String, data := ""):
 	var scene := load(path)

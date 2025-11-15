@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://camv5rvo0ohyb"]
+
+[ext_resource type="Script" uid="uid://eewafo213vhj" path="res://client/scenes/ui/minigame_fix.gd" id="1_jr40s"]
+[ext_resource type="Texture2D" uid="uid://c3sluwj6td0rp" path="res://client/assets/placeholder/fix.jpg" id="1_wybpp"]
+
+[node name="MinigameFix" type="CanvasLayer"]
+script = ExtResource("1_jr40s")
+
+[node name="Fix" type="Sprite2D" parent="."]
+position = Vector2(588, 335)
+scale = Vector2(3.07377, 2.62681)
+texture = ExtResource("1_wybpp")

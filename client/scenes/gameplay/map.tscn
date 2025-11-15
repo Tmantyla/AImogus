@@ -7,7 +7,7 @@
 script = ExtResource("1_vado4")
 
 [node name="Map" type="Sprite2D" parent="."]
-position = Vector2(561, 312)
+position = Vector2(554, 417)
 scale = Vector2(0.559295, 0.559295)
 texture = ExtResource("2_ha78i")
 

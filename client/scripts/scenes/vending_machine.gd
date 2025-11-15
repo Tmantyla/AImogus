@@ -13,3 +13,4 @@ func _ready():
 func _apply_data():
 	if is_inside_tree():
 		back_button.name = label_text
+		
