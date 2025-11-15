@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://iqiokke2gfpj"]
+
+[ext_resource type="Script" uid="uid://cekuglqdgxki" path="res://client/scenes/ui/panel.gd" id="1_enjbo"]
+
+[node name="Chatbox" type="CanvasLayer"]
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 823.0
+offset_top = 473.0
+offset_right = 1144.0
+offset_bottom = 639.0
+script = ExtResource("1_enjbo")
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+layout_mode = 0
+offset_right = 317.0
+offset_bottom = 158.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer/ScrollContainer"]
+layout_mode = 2

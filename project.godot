@@ -18,3 +18,4 @@ config/icon="res://icon.svg"
 [autoload]
 
 ButtonHandler="*res://client/scripts/button_handler.gd"
+ChatBox="*res://client/scenes/ui/chatbox.tscn"

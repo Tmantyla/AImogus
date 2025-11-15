@@ -9,13 +9,13 @@ func connect_buttons(root: Node):
 
 func _on_button_pressed(btn, category):
 	if category.name == "Stations":
-		_swap_scene("res://client/scenes/station.tscn", btn.name)
+		_swap_scene("res://client/scenes/gameplay/station.tscn", btn.name)
 	if category.name == "Map":
-		_swap_scene("res://client/scenes/map.tscn")
+		_swap_scene("res://client/scenes/gameplay/map.tscn")
 	if category.name == "Vending":
-		_swap_scene("res://client/scenes/vending_machine.tscn", btn.name)
+		_swap_scene("res://client/scenes/gameplay/vending_machine.tscn", btn.name)
 	if category.name == "Back":
-		_swap_scene("res://client/scenes/station.tscn", btn.name)
+		_swap_scene("res://client/scenes/gameplay/station.tscn", btn.name)
 
 func _swap_scene(path: String, data := ""):
 	var scene := load(path)
