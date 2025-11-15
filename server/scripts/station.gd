@@ -6,12 +6,14 @@ var connectedStations: Array[Station] = []
 var vesselsAtStation: Array[int] = []
 var artefacts: Array[String] = []
 var id: int
+var server: Server
 
 var spawnArefactTimer = 0
 const ARTEFACT_SPAWN_RATE = 3000
 
-func _init(_id: int) -> void:
+func _init(_id: int, _server: Server) -> void:
 	id = _id
+	server = _server
 
 func connectVessel(id: int) -> void:
 	vesselsAtStation.append(id)
@@ -28,6 +30,10 @@ func disconnectStation(station: Station) -> void:
 
 func spawnArtefact() -> void:
 	artefacts.append("Duck")
+
+func shout(who: Vessel, what: SU.ActionSignal, where: String) -> void:
+	for vessel in vesselsAtStation:
+		server.vessels[vessel].observe(who, what, where)
 
 func _process(delta: float) -> void:
 	spawnArefactTimer += delta

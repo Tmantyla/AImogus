@@ -28,6 +28,9 @@ func requestQuestionToFriend() -> void:
 func requestContinue() -> void:
 	pass # OVERRIDE THIS
 
+func requestActionAtVendingMachine() -> void:
+	pass # OVERRIDE THIS
+
 # I wish to change station
 func goToChangeStation() -> void:
 	state = State.CHANGING_STATION
@@ -51,6 +54,10 @@ func recieveAbortChat() -> void:
 	conversationBuddy = null
 	state = State.AT_STATION
 	
+# Someone did something! 
+func observe(who: int, what: SU.ActionSignal, where: String) -> void:
+	pass # OVERRIDE THIS
+	
 # I will continue the chat
 func continueChat() -> void:
 	if conversationBuddy != null:
@@ -71,6 +78,19 @@ func changeStation(index: int) -> void:
 	currentPosition = nextPosition
 	state = State.AT_STATION
 	### SEND SIGNAL THAT I LEFT
+	
+func refillVendingMachine() -> void:
+	print("refilled")
+	### SEND SIGNAL THAT I REFILLED
+	leaveVendingMachine()
+
+func repairVendingMachine() -> void:
+	print("repaired")
+	### SEND SIGNAL THAT I REPAIRED
+	leaveVendingMachine()
+
+func leaveVendingMachine() -> void:
+	state = State.AT_STATION
 	
 # I would like to pick up an artefact
 func pickupArtefact() -> void:
@@ -100,6 +120,11 @@ func sendQuestion(text: String) -> void:
 		var buddy = server.vessels[conversationBuddy]
 		buddy.recieveQuestion(text)
 	state = State.CHATTING_RECIEVER
+
+# I would like to act at the vending machine
+func goToVendingMachine() -> void:
+	state = State.AT_VENDING_MACHINE
+	requestActionAtVendingMachine()
 
 # I would like to talk with vesselId
 func initiateConversation(vesselId: int) -> void:
