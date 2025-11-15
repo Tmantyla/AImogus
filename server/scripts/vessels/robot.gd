@@ -32,10 +32,10 @@ func _init(_id: int, _server: Server) -> void:
 	START INSTRUCTIONS
 
 	PREMISE:
-		- You are a player in a game.
-		- In this game, earth is inhabited by AI-controlled robots.
+		- You are a robot on earth.
+		- Earth is inhabited by AI-controlled robots.
 		- No humans are allowed on earth.
-		- There are a number of other players too. All or none of them may be human. Humans will try to pretend to be AI.
+		- There are a number of other bots too. All or none of them may be humans in disguise. Humans will try to pretend to be AI.
 		- A vote is held a few times during the game. Each time one player can be voted out.
 		- Humans will try to collect artefacts around the area.
 
