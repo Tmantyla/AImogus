@@ -37,9 +37,11 @@ func _ready():
 	vessels[0] = debugPlayer
 	vessels[1] = Robot.new(1, self)
 	vessels[2] = Player.new(2, self)
-	vessels[3] = Robot.new(3, self)
+	for i in range(3, 10):
+		vessels[i] = Robot.new(i, self)
+		add_child(vessels[i])
+
 	add_child(vessels[1])
-	add_child(vessels[3])
 
 
 func _process(delta):
