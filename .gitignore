@@ -42,3 +42,6 @@ devenv.local.nix
 
 # secrets
 .secrets.env
+
+# GIMP image files
+*.xcf
