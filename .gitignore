@@ -46,3 +46,6 @@ devenv.local.nix
 
 # GIMP image files
 *.xcf
+
+# backup stuff
+.history
