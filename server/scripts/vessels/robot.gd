@@ -158,8 +158,6 @@ func action(message) -> String:
 
 
 func parseJson(string):
-	# print("Robot %s: " % id, string)
-
 	var regex = RegEx.new()
 	regex.compile("```json(.*?)```")
 	var result = regex.search(string)
@@ -168,15 +166,12 @@ func parseJson(string):
 	else:
 		string = string
 
-	# print("RESULT: ", string)
-
 	string = string.replace("```json", "")
 	string = string.replace("```", "")
 	string = string.strip_edges()
 
 	var json = JSON.parse_string(string)
 	if json == null:
-		# print(string)
 		print("Robot %s was lobotomized (JSON null): " % id, string)
 		# kill robot
 	return json
@@ -185,7 +180,8 @@ func parseJson(string):
 # Toby Fox ahh function
 func parseAction(string):
 	var json = parseJson(string)
-	print(json)
+	if int(json.action) >= playerState.actions.size():
+		print("Robot %s was lobotomized" % id)
 	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
@@ -203,7 +199,6 @@ func parseAction(string):
 				)
 				if idx != -1:
 					var task = playerState["tasks"].pop_at(idx)
-					print(task)
 					match task:
 						# TODO do the stuff @Zen
 						"withdraw":
