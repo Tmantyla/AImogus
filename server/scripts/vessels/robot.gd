@@ -17,17 +17,15 @@ func _init(_id: int, _server: Server) -> void:
 	http = HTTPRequest.new()
 	add_child(http)
 
-	# TODO randomize these
-	playerState["tasks"] = [
-		{
-			"location": 0,
-			"action": "repair",
-		},
-		{
-			"location": 1,
-			"action": "restock",
-		}
-	]
+	playerState["tasks"] = []
+	var actions = ["repair", "restock", "withdraw"]
+
+	for i in range(1, 10):
+		playerState["tasks"].append(
+			{"location": server.MAP_VERTICES.pick_random(), "action": actions.pick_random()}
+		)
+
+	print("Robot %s tasks: " % id, playerState["tasks"])
 
 	SYSTEM_PROMPT = (
 		"""
@@ -92,11 +90,10 @@ func _init(_id: int, _server: Server) -> void:
 					},
 					{
 						type = "machine",
-						interaction = "repair"
 					}
 				] # List of possible actions.
 			}
-			- In this default state of the game, you need to choose an action and give an extra parameter depending on the type of action:
+			- In this default state of the game, you need to choose an action with its zero-based index and give an extra parameter depending on the type of action:
 				- If the type is "movement", no extra input is needed:
 					{
 						action: index
@@ -161,17 +158,27 @@ func action(message) -> String:
 
 
 func parseJson(string):
-	print(string)
+	# print("Robot %s: " % id, string)
+
+	var regex = RegEx.new()
+	regex.compile("```json(.*?)```")
+	var result = regex.search(string)
+	if result:
+		string = result.get_string(1)
+	else:
+		string = string
+
+	# print("RESULT: ", string)
+
 	string = string.replace("```json", "")
 	string = string.replace("```", "")
 	string = string.strip_edges()
 
 	var json = JSON.parse_string(string)
 	if json == null:
-		print(string)
-		print("Robot %s was lobotomized" % id)
+		# print(string)
+		print("Robot %s was lobotomized (JSON null): " % id, string)
 		# kill robot
-		# return null
 	return json
 
 
@@ -210,9 +217,12 @@ func parseAction(string):
 					state = State.AT_STATION
 
 			"conversation":
-				print("Robot %s wants to talk with player %s: %s" % [id, act.player, json.message])
-				initiateConversation(act.player)
-				sendQuestion(json.message)
+				if json.has("message"):
+					print(
+						"Robot %s wants to talk with player %s: %s" % [id, act.player, json.message]
+					)
+					initiateConversation(act.player)
+					sendQuestion(json.message)
 			_:
 				print("Robot %s was lobotomized" % id)
 				# TODO kill robot
@@ -258,13 +268,18 @@ func _process(delta: float) -> void:
 				else:
 					var msg = {"id": conversationBuddy, "message": recievedQuestion}
 					var response = await action(msg)
-					var body = parseJson(response)["message"]
-					if body == "":
+					var json = parseJson(response)
+					if !json.has("message") or json.message == "":
 						abortChat()
 					else:
-						print("Robot %s answered to player %s: %s" % [id, conversationBuddy, body])
+						print(
+							(
+								"Robot %s answered to player %s: %s"
+								% [id, conversationBuddy, json.message]
+							)
+						)
 						continueChat()
-						sendQuestion(body)
+						sendQuestion(json.message)
 				idle = true
 		_:
 			pass
