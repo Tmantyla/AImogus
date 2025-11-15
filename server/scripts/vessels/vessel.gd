@@ -1,6 +1,6 @@
 extends Node2D
 class_name Vessel
-const State = SU.VS
+const State = ServerUtilities.VS
 
 var id = -1
 var currentPosition: Station
@@ -52,13 +52,13 @@ func abortChat() -> void:
 # Apparently my buddy would like to end the conversation
 func recieveAbortChat() -> void:
 	if conversationBuddy != null:
-		currentPosition.shout(id, SU.ActionSignal.END_CHAT, str(conversationBuddy))
+		currentPosition.shout(id, ServerUtilities.ActionSignal.END_CHAT, str(conversationBuddy))
 	recievedQuestion = null
 	conversationBuddy = null
 	state = State.AT_STATION
 	
 # Someone did something! 
-func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
+func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> void:
 	pass # OVERRIDE THIS
 	
 # I will continue the chat
@@ -83,8 +83,8 @@ func changeStation(sid: int) -> void:
 	if nextPosition == null:
 		print("Station not connected to current")
 	
-	currentPosition.shout(id, SU.ActionSignal.LEAVE, str(nextPosition.id))
-	nextPosition.shout(id, SU.ActionSignal.ARRIVE, str(currentPosition.id))
+	currentPosition.shout(id, ServerUtilities.ActionSignal.LEAVE, str(nextPosition.id))
+	nextPosition.shout(id, ServerUtilities.ActionSignal.ARRIVE, str(currentPosition.id))
 	
 	nextPosition.connectVessel(id)
 	currentPosition = nextPosition
@@ -93,24 +93,24 @@ func changeStation(sid: int) -> void:
 	
 func refillVendingMachine() -> void:
 	print("refilled")
-	currentPosition.shout(id, SU.ActionSignal.REFILL_VENDING, "")
+	currentPosition.shout(id, ServerUtilities.ActionSignal.REFILL_VENDING, "")
 	leaveVendingMachine()
 
 func repairVendingMachine() -> void:
 	print("repaired")
-	currentPosition.shout(id, SU.ActionSignal.REPAIR_VENDING, "")
+	currentPosition.shout(id, ServerUtilities.ActionSignal.REPAIR_VENDING, "")
 	leaveVendingMachine()
 
 func leaveVendingMachine() -> void:
 	state = State.AT_STATION
-	currentPosition.shout(id, SU.ActionSignal.LEAVE_VENDING, "")
+	currentPosition.shout(id, ServerUtilities.ActionSignal.LEAVE_VENDING, "")
 	
 # I would like to pick up an artefact
 func pickupArtefact() -> void:
 	if currentPosition.artefacts.size() > 0:
 		currentPosition.artefacts.pop_back()
 		artefacts+=1
-		currentPosition.shout(id, SU.ActionSignal.PICKUP_ARTEFACT, "")
+		currentPosition.shout(id, ServerUtilities.ActionSignal.PICKUP_ARTEFACT, "")
 	else:
 		print("No artefacts to pick up")
 		
@@ -139,7 +139,7 @@ func sendQuestion(text: String) -> void:
 func goToVendingMachine() -> void:
 	state = State.AT_VENDING_MACHINE
 	requestActionAtVendingMachine()
-	currentPosition.shout(id, SU.ActionSignal.GO_TO_VENDING, "")
+	currentPosition.shout(id, ServerUtilities.ActionSignal.GO_TO_VENDING, "")
 
 # I would like to talk with vesselId
 func initiateConversation(vesselId: int) -> void:
@@ -147,7 +147,7 @@ func initiateConversation(vesselId: int) -> void:
 	conversationBuddy = vesselId
 	server.vessels[vesselId].recieveConversationFrom(id)
 	requestQuestionToFriend()
-	currentPosition.shout(id, SU.ActionSignal.START_CHAT, str(conversationBuddy))
+	currentPosition.shout(id, ServerUtilities.ActionSignal.START_CHAT, str(conversationBuddy))
 
 func _process(delta: float) -> void:
 	pass

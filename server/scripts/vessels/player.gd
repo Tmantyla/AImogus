@@ -13,8 +13,8 @@ func TEMP_askDialogue(question: String):
 		edit.queue_free()
 	)
 
-func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
-	print("PLAYER " + str(id) + " OBSERVED " + str(who) + " " + SU.actionString(what, subject) + "!")
+func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> void:
+	print("PLAYER " + str(id) + " OBSERVED " + str(who) + " " + ServerUtilities.actionString(what, subject) + "!")
 	### Send observation to client
 
 func requestActionAtVendingMachine() -> void:

@@ -113,8 +113,8 @@ func _init(_id: int, _server: Server) -> void:
 		}
 	]
 
-func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
-	observations.append("You observed player " + str(who) + SU.actionString(what, subject))
+func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> void:
+	observations.append("You observed player " + str(who) + ServerUtilities.actionString(what, subject))
 
 func action(message) -> String:
 	if context.size() == 0:
