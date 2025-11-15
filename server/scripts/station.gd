@@ -31,9 +31,10 @@ func disconnectStation(station: Station) -> void:
 func spawnArtefact() -> void:
 	artefacts.append("Duck")
 
-func shout(who: Vessel, what: SU.ActionSignal, where: String) -> void:
+func shout(who: int, what: SU.ActionSignal, subject: String) -> void:
 	for vessel in vesselsAtStation:
-		server.vessels[vessel].observe(who, what, where)
+		if vessel != who:
+			server.vessels[vessel].observe(who, what, subject)
 
 func _process(delta: float) -> void:
 	spawnArefactTimer += delta

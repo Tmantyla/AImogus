@@ -50,12 +50,14 @@ func abortChat() -> void:
 	
 # Apparently my buddy would like to end the conversation
 func recieveAbortChat() -> void:
+	if conversationBuddy != null:
+		currentPosition.shout(id, SU.ActionSignal.END_CHAT, str(conversationBuddy))
 	recievedQuestion = null
 	conversationBuddy = null
 	state = State.AT_STATION
 	
 # Someone did something! 
-func observe(who: int, what: SU.ActionSignal, where: String) -> void:
+func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
 	pass # OVERRIDE THIS
 	
 # I will continue the chat
@@ -74,30 +76,34 @@ func continueChat() -> void:
 func changeStation(index: int) -> void:
 	currentPosition.disconnectVessel(id)
 	var nextPosition = currentPosition.connectedStations.get(index)
+	currentPosition.shout(id, SU.ActionSignal.LEAVE, str(nextPosition.id))
+	nextPosition.shout(id, SU.ActionSignal.ARRIVE, str(currentPosition.id))
+	
 	nextPosition.connectVessel(id)
 	currentPosition = nextPosition
 	state = State.AT_STATION
-	### SEND SIGNAL THAT I LEFT
+	
 	
 func refillVendingMachine() -> void:
 	print("refilled")
-	### SEND SIGNAL THAT I REFILLED
+	currentPosition.shout(id, SU.ActionSignal.REFILL_VENDING, "")
 	leaveVendingMachine()
 
 func repairVendingMachine() -> void:
 	print("repaired")
-	### SEND SIGNAL THAT I REPAIRED
+	currentPosition.shout(id, SU.ActionSignal.REPAIR_VENDING, "")
 	leaveVendingMachine()
 
 func leaveVendingMachine() -> void:
 	state = State.AT_STATION
+	currentPosition.shout(id, SU.ActionSignal.LEAVE_VENDING, "")
 	
 # I would like to pick up an artefact
 func pickupArtefact() -> void:
 	if currentPosition.artefacts.size() > 0:
 		currentPosition.artefacts.pop_back()
 		artefacts+=1
-		### SEND SIGNAL THAT I PICKED UP AN ARTEFACT
+		currentPosition.shout(id, SU.ActionSignal.PICKUP_ARTEFACT, "")
 	else:
 		print("No artefacts to pick up")
 		
@@ -125,6 +131,7 @@ func sendQuestion(text: String) -> void:
 func goToVendingMachine() -> void:
 	state = State.AT_VENDING_MACHINE
 	requestActionAtVendingMachine()
+	currentPosition.shout(id, SU.ActionSignal.GO_TO_VENDING, "")
 
 # I would like to talk with vesselId
 func initiateConversation(vesselId: int) -> void:
@@ -132,6 +139,7 @@ func initiateConversation(vesselId: int) -> void:
 	conversationBuddy = vesselId
 	server.vessels[vesselId].recieveConversationFrom(id)
 	requestQuestionToFriend()
+	currentPosition.shout(id, SU.ActionSignal.START_CHAT, str(conversationBuddy))
 
 func _process(delta: float) -> void:
 	pass
