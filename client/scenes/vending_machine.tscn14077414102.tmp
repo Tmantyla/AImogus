@@ -13,9 +13,8 @@ texture = ExtResource("1_phdir")
 
 [node name="Buttons" type="Node" parent="."]
 
-[node name="Back" type="Node" parent="Buttons"]
+[node name="Map" type="Node" parent="Buttons"]
 
-[node name="Back" type="Button" parent="Buttons/Back"]
-offset_right = 469.0
-offset_bottom = 79.0
-text = "Back"
+[node name="Map" type="Button" parent="Buttons/Map"]
+offset_right = 222.0
+offset_bottom = 63.0

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyqd17yqbl36l"]
 
 [ext_resource type="Texture2D" uid="uid://bswiku18vh4j3" path="res://client/assets/placeholder/map.png" id="1_7vd85"]
-[ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://client/scenes/map.gd" id="1_fb6nl"]
+[ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://client/scripts/scenes/map.gd" id="1_fb6nl"]
 
 [node name="Map" type="Node2D"]
 script = ExtResource("1_fb6nl")
