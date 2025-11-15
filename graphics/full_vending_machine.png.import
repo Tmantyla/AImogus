@@ -2,7 +2,11 @@
 
 importer="texture"
 type="CompressedTexture2D"
+<<<<<<< HEAD
 uid="uid://cvixb1ocgbg7c"
+=======
+uid="uid://duk2n7f54tmlo"
+>>>>>>> 659527a (Fix communications)
 path="res://.godot/imported/full_vending_machine.png-417c178f47bc4af4c69ba443261aa094.ctex"
 metadata={
 "vram_texture": false

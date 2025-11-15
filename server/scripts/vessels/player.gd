@@ -21,6 +21,10 @@ func requestNextStation() -> void:
 	TEMP_dialogueAnswer = null
 	TEMP_askDialogue("Which station? (index from 0-" + str(currentPosition.connectedStations.size()-1) + ")")
 
+func requestContinue() -> void:
+	TEMP_dialogueAnswer = null
+	TEMP_askDialogue("Continue? (yes/no)")
+
 func _process(delta: float) -> void:
 	if id == 0: # temp for debug only control player with id 0
 		match state:
@@ -59,12 +63,18 @@ func _process(delta: float) -> void:
 			State.CHATTING_RECIEVER:
 				pass # Buddy should call your "recieve question" function
 			State.CHATTING_CONTINUE:
-				if Input.is_action_just_pressed("ui_up"):
-					continueChat()
-				if Input.is_action_just_pressed("up_down"):
-					abortChat()
+				if TEMP_dialogueAnswer != null:
+					if TEMP_dialogueAnswer == "yes":
+						continueChat()
+					else:
+						abortChat()
+					TEMP_dialogueAnswer = null
 			_:
 				print("Bad state, changing to VOID")
 				state = State.VOID
 	else:
 		pass
+	queue_redraw()
+	
+func _draw() -> void:
+	pass

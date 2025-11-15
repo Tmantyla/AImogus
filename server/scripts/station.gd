@@ -5,9 +5,13 @@ class_name Station
 var connectedStations: Array[Station] = []
 var vesselsAtStation: Array[int] = []
 var artefacts: Array[String] = []
+var id: int
 
 var spawnArefactTimer = 0
 const ARTEFACT_SPAWN_RATE = 3000
+
+func _init(_id: int) -> void:
+	id = _id
 
 func connectVessel(id: int) -> void:
 	vesselsAtStation.append(id)

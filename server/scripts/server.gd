@@ -17,7 +17,7 @@ var stations: Array[Station] = []
 
 func _ready():
 	for vertex in MAP_VERTICES:
-		var station = Station.new()
+		var station = Station.new(vertex)
 		stations.append(station)
 		station.position = TEMP_VERTEX_POSITIONS[vertex]
 		add_child(station) # For visual only
