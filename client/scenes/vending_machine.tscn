@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyyefe513pnm0"]
+
+[ext_resource type="Texture2D" uid="uid://c4f8aad8aopex" path="res://client/assets/placeholder/vendingmachine.png" id="1_phdir"]
+
+[node name="Vendingmachine" type="Node2D"]
+
+[node name="Vendingmachine" type="Sprite2D" parent="."]
+position = Vector2(601, 338)
+scale = Vector2(0.238177, 0.238177)
+texture = ExtResource("1_phdir")

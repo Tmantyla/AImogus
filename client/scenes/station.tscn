@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://fjfwyinfdarr"]
+
+[ext_resource type="Script" uid="uid://bqef1d1vh5uyr" path="res://client/scenes/station.gd" id="1_fkukc"]
+[ext_resource type="Texture2D" uid="uid://dy6cqr8f0ylcr" path="res://client/assets/placeholder/train_station.jpg" id="1_svoq6"]
+
+[node name="Station" type="Node2D"]
+script = ExtResource("1_fkukc")
+
+[node name="TrainStation" type="Sprite2D" parent="."]
+position = Vector2(570, 374)
+scale = Vector2(1.55684, 1.55684)
+texture = ExtResource("1_svoq6")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 39.0
+offset_right = 982.0
+offset_bottom = 383.0

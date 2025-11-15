@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2txsd04e3fc4"]
+
+[ext_resource type="Texture2D" uid="uid://db07y75og7mq8" path="res://client/assets/placeholder/portrait.jpg" id="1_a3njk"]
+
+[node name="Node2D" type="Node2D"]
+
+[node name="Portrait" type="Sprite2D" parent="."]
+position = Vector2(319.19, 64.75)
+scale = Vector2(0.834353, 0.834354)
+texture = ExtResource("1_a3njk")
