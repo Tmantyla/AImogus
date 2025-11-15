@@ -34,6 +34,7 @@ func requestContinue() -> void:
 	TEMP_askDialogue("Continue? (yes/no)")
 
 func _process(delta: float) -> void:
+	interrupted = false
 	if id == 0: # temp for debug only control player with id 0
 		match state:
 			State.VOID:

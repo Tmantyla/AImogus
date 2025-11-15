@@ -22,6 +22,8 @@ enum ActionSignal {
 	LEAVE_VENDING,
 	REPAIR_VENDING,
 	REFILL_VENDING,
+	LOBOTOMY,
+	VOTED_OUT,
 	PICKUP_ARTEFACT
 }
 
@@ -46,6 +48,10 @@ func actionString(what: ActionSignal, subject: String) -> String:
 			action = "Repair vending machine"
 		ActionSignal.REFILL_VENDING:
 			action = "Refill vending machine"
+		ActionSignal.LOBOTOMY:
+			action = "Get lobotomized"
+		ActionSignal.VOTED_OUT:
+			action = "Get voted out"
 		_:
 			action = "Do something not accounted for in the programming"
 	return action

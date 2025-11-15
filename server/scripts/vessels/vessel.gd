@@ -11,6 +11,7 @@ var recievedQuestion = null
 var conversationBuddy = null
 
 var artefacts: int = 0
+var interrupted: bool = false
 
 func _init(_id: int, _server: Server) -> void:	
 	id = _id
@@ -72,10 +73,16 @@ func continueChat() -> void:
 		print("Conversation buddy disappeared??")
 		state = State.AT_STATION
 
-# Change station to index X
-func changeStation(index: int) -> void:
+# Change station to the one with id sid
+func changeStation(sid: int) -> void:
 	currentPosition.disconnectVessel(id)
-	var nextPosition = currentPosition.connectedStations.get(index)
+	var nextPosition = null
+	for station in currentPosition.connectedStations:
+		if station.id == sid:
+			nextPosition = station
+	if nextPosition == null:
+		print("Station not connected to current")
+	
 	currentPosition.shout(id, SU.ActionSignal.LEAVE, str(nextPosition.id))
 	nextPosition.shout(id, SU.ActionSignal.ARRIVE, str(currentPosition.id))
 	
@@ -110,6 +117,7 @@ func pickupArtefact() -> void:
 # It seems someone wants to talk to me
 func recieveConversationFrom(vesselId: int) -> void:
 	state = State.CHATTING_RECIEVER
+	interrupted = true
 	recievedQuestion = null
 	conversationBuddy = vesselId
 	

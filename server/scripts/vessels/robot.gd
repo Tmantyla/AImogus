@@ -1,6 +1,8 @@
 extends Vessel
 class_name Robot
 
+var observations: Array[String] = []
+
 const SYSTEM_PROMPT = """
 START INSTRUCTIONS
 
@@ -94,7 +96,6 @@ var TEMP_response = null
 var http: HTTPRequest
 var playerState: Dictionary  # Not to be confused with State, the naming is what it is (skill issue)
 
-
 func _init(_id: int, _server: Server) -> void:
 	super._init(_id, _server)
 	http = HTTPRequest.new()
@@ -112,6 +113,8 @@ func _init(_id: int, _server: Server) -> void:
 		}
 	]
 
+func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
+	observations.append("You observed player " + str(who) + SU.actionString(what, subject))
 
 func action(message) -> String:
 	if context.size() == 0:
@@ -134,51 +137,44 @@ func parseAction(string):
 	var act = playerState.actions[json.action]
 
 	# TODO interrupts @Zen
-	# if self.interrupted:
-	# 	match interrupt:
-	# 		"meeting":
-	# 			# TODO
-	# 			pass
-	# 		"conversation":
-	# 			# TODO
-	# 			pass
-	# else:
-	# TODO make the match arms actually do something
-	match act.type:
-		"movement":
-			print("Robot %s changed station to %s" % [id, act.destination])
-			# TODO move to station @Zen
-		"machine":
-			print("Robot %s went to the vending machine" % id)
-			var idx = playerState["tasks"].find(
-				func(task): return task["location"] == playerState.location
-			)
-			if idx != -1:
-				var task = playerState["tasks"].pop_at(idx)
-				print(task)
-				match task:
-					# TODO do the stuff @Zen
-					"withdraw":
-						pass
-					"repair":
-						pass
-					"refill":
-						pass
-			else:
-				# Just take from the machine (default actions)
-				pass
+	if interrupted:
+		observations.append("Your last action was interrupted!")
+		interrupted = false
+	else:
+		match act.type:
+			"movement":
+				changeStation(act.destination)
+			"machine":
+				print("Robot %s went to the vending machine" % id)
+				var idx = playerState["tasks"].find(
+					func(task): return task["location"] == playerState.location
+				)
+				if idx != -1:
+					var task = playerState["tasks"].pop_at(idx)
+					print(task)
+					match task:
+						# TODO do the stuff @Zen
+						"withdraw":
+							pass
+						"repair":
+							repairVendingMachine()
+						"refill":
+							refillVendingMachine()
+				else:
+					# Just take from the machine (default actions)
+					pass
 
-		"interaction":
-			print("Robot %s wants to talk with player %s" % [id, act.player])
-			# TODO makeli @Zen
-		_:
-			print("Robot %s was lobotomized", id)
-			# TODO kill robot
+			"interaction":
+				#print("Robot %s wants to talk with player %s" % [id, act.player])
+				initiateConversation(act.player)
+			_:
+				print("Robot %s was lobotomized", id)
+				# TODO kill robot
 
 
 func updateState():
 	playerState["location"] = self.currentPosition.id
-	playerState["observations"] = [""]  # TODO
+	playerState["observations"] = observations  # TODO
 	playerState["actions"] = [  # TODO
 		{"type": "movement", "destination": 1},
 		{"type": "movement", "destination": 3},
@@ -192,21 +188,32 @@ var idle = true
 
 func _process(delta: float) -> void:
 	actTimer += delta
-	# FIXME: Instead of idle this could check if State.VOID
-	if actTimer > 5 and idle:
-		actTimer = 0
-
-		# TODO playerState = getState() type shi
-		# Below is a dummy state
-		updateState()
-
-		match state:
-			State.VOID:
-				print("Robot " + str(id) + " wants to act but is VOID")
-			State.AT_STATION:
+	
+	match state:
+		State.VOID:
+			print("Robot " + str(id) + " wants to act but is VOID")
+		State.AT_STATION:
+			if actTimer > 5 and idle:
+				actTimer = 0
+				
+				updateState()
+				
 				print("acting now!")
 				idle = false
 				parseAction(await action(playerState))
-			_:
-				print("Bad state, changing to VOID")
-				state = State.VOID
+				idle = true
+		State.CHATTING_CONTINUE:
+			if idle:
+				if conversationBuddy == null or recievedQuestion == null:
+					abortChat()
+				var msg = { "id": conversationBuddy, "message": recievedQuestion}
+				var response = await action(msg)
+				if response == "":
+					abortChat()
+				else:
+					continueChat()
+					sendQuestion(response)
+				idle = false
+		_:
+			print("Bad state, changing to VOID")
+			state = State.VOID
