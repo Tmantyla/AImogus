@@ -19,3 +19,5 @@ texture = ExtResource("2_umrwv")
 offset_right = 469.0
 offset_bottom = 79.0
 text = "Back"
+
+[node name="Node" type="Node" parent="Buttons"]
