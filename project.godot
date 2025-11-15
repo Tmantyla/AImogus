@@ -19,3 +19,4 @@ config/icon="res://icon.svg"
 
 ButtonHandler="*res://client/src/button_handler.gd"
 AiApi="*res://ai_api.gd"
+SU="*res://server/scripts/server_utilities.gd"
