@@ -82,12 +82,12 @@ func changeStation(sid: int) -> void:
 			nextPosition = station
 	if nextPosition == null:
 		print("Station not connected to current")
-	
-	currentPosition.shout(id, ServerUtilities.ActionSignal.LEAVE, str(nextPosition.id))
-	nextPosition.shout(id, ServerUtilities.ActionSignal.ARRIVE, str(currentPosition.id))
-	
-	nextPosition.connectVessel(id)
-	currentPosition = nextPosition
+	else:
+		currentPosition.shout(id, ServerUtilities.ActionSignal.LEAVE, str(nextPosition.id))
+		nextPosition.shout(id, ServerUtilities.ActionSignal.ARRIVE, str(currentPosition.id))
+		
+		nextPosition.connectVessel(id)
+		currentPosition = nextPosition
 	state = State.AT_STATION
 	
 	
@@ -130,7 +130,7 @@ func recieveQuestion(text: String) -> void:
 	
 # Send Question to conversationBuddy
 func sendQuestion(text: String) -> void:
-	if conversationBuddy != -1:
+	if conversationBuddy != null:
 		var buddy = server.vessels[conversationBuddy]
 		buddy.recieveQuestion(text)
 	state = State.CHATTING_RECIEVER

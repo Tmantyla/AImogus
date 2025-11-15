@@ -38,6 +38,7 @@ PROTOCOL:
 	- Prompts will be formatted as JSON.
 	- They will present all available actions clearly. - Answer using JSON only.
 	- It is imperative that you do not reply with anything else than valid JSON responses.
+	- Do not add ``` or ```json around your answer in any case.
 	- If the system fails to parse your answer, you will be killed and you lose.
 
 MAP:
@@ -131,10 +132,11 @@ func action(message) -> String:
 func parseAction(string):
 	var json = JSON.parse_string(string)
 	if json == null:
-		print("Robot %s was lobotomized", id)
+		print(string)
+		print("Robot %s was lobotomized"% id)
 		# kill robot
 
-	var act = playerState.actions[json.action]
+	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
 	if interrupted:
@@ -155,18 +157,19 @@ func parseAction(string):
 					match task:
 						# TODO do the stuff @Zen
 						"withdraw":
-							pass
+							state = State.AT_STATION
 						"repair":
 							repairVendingMachine()
 						"refill":
 							refillVendingMachine()
 				else:
 					# Just take from the machine (default actions)
-					pass
+					state = State.AT_STATION
 
 			"interaction":
-				#print("Robot %s wants to talk with player %s" % [id, act.player])
+				print("Robot %s wants to talk with player %s" % [id, act.player])
 				initiateConversation(act.player)
+				sendQuestion(json.message)
 			_:
 				print("Robot %s was lobotomized", id)
 				# TODO kill robot
@@ -174,13 +177,15 @@ func parseAction(string):
 
 func updateState():
 	playerState["location"] = self.currentPosition.id
-	playerState["observations"] = observations  # TODO
-	playerState["actions"] = [  # TODO
-		{"type": "movement", "destination": 1},
-		{"type": "movement", "destination": 3},
-		{"type": "interaction", "player": 0},
-		{"type": "machine"}
-	]
+	playerState["observations"] = observations 
+	playerState["actions"] = []
+	for dst in currentPosition.connectedStations:
+		playerState["actions"].append({"type": "movement", "destination": dst.id})
+		
+	for vesselId in currentPosition.vesselsAtStation:
+		if vesselId != id:
+			playerState["actions"].append({"type": "interaction", "player": vesselId})
+	playerState["actions"].append({"type": "machine"})
 
 
 var idle = true
@@ -204,16 +209,18 @@ func _process(delta: float) -> void:
 				idle = true
 		State.CHATTING_CONTINUE:
 			if idle:
+				idle = false
 				if conversationBuddy == null or recievedQuestion == null:
 					abortChat()
-				var msg = { "id": conversationBuddy, "message": recievedQuestion}
-				var response = await action(msg)
-				if response == "":
-					abortChat()
 				else:
-					continueChat()
-					sendQuestion(response)
-				idle = false
+					var msg = { "id": conversationBuddy, "message": recievedQuestion}
+					var response = await action(msg)
+					var body = JSON.parse_string(response)["message"]
+					if body == "":
+						abortChat()
+					else:
+						continueChat()
+						sendQuestion(body)
+				idle = true
 		_:
-			print("Bad state, changing to VOID")
-			state = State.VOID
+			pass
