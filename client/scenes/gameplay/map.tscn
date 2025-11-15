@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyqd17yqbl36l"]
 
-[ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://client/scripts/scenes/map.gd" id="1_vado4"]
-[ext_resource type="Texture2D" uid="uid://bswiku18vh4j3" path="res://client/assets/placeholder/map.png" id="2_ha78i"]
+[ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://scripts/scenes/map.gd" id="1_vado4"]
+[ext_resource type="Texture2D" uid="uid://bswiku18vh4j3" path="res://assets/placeholder/map.png" id="2_ha78i"]
 
 [node name="Map" type="Node2D"]
 script = ExtResource("1_vado4")
