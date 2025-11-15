@@ -48,7 +48,7 @@ func _set_hover(actor, state):
 
 	if state:
 		actor.scale = orig_scale * 1.10
-		actor.position = orig_pos + Vector2(0, -11)
+		actor.position = orig_pos + Vector2(0, -10)
 	else:
 		actor.scale = orig_scale
 		actor.position = orig_pos
