@@ -19,5 +19,4 @@ config/icon="res://icon.svg"
 
 ButtonHandler="*res://client/scripts/button_handler.gd"
 ChatBox="*res://client/scenes/ui/chatbox.tscn"
-AiApi="*res://ai_api.gd"
 SU="*res://server/scripts/server_utilities.gd"
