@@ -14,3 +14,7 @@ config/name="AImogus"
 run/main_scene="uid://cyqd17yqbl36l"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+ButtonHandler="*res://client/src/button_handler.gd"

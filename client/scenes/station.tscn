@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://fjfwyinfdarr"]
 
-[ext_resource type="Script" uid="uid://bqef1d1vh5uyr" path="res://client/scenes/station.gd" id="1_fkukc"]
+[ext_resource type="Script" uid="uid://bqef1d1vh5uyr" path="res://client/src/station.gd" id="1_fkukc"]
 [ext_resource type="Texture2D" uid="uid://dy6cqr8f0ylcr" path="res://client/assets/placeholder/train_station.jpg" id="1_svoq6"]
 
 [node name="Station" type="Node2D"]
@@ -15,3 +15,12 @@ texture = ExtResource("1_svoq6")
 offset_left = 39.0
 offset_right = 982.0
 offset_bottom = 383.0
+
+[node name="Buttons" type="Node" parent="."]
+
+[node name="Map" type="Node" parent="Buttons"]
+
+[node name="Map" type="Button" parent="Buttons/Map"]
+offset_right = 135.0
+offset_bottom = 70.0
+text = "Map"

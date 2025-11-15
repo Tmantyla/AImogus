@@ -1,28 +1,28 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyqd17yqbl36l"]
 
 [ext_resource type="Texture2D" uid="uid://bswiku18vh4j3" path="res://client/assets/placeholder/map.png" id="1_7vd85"]
-[ext_resource type="Script" uid="uid://li6mqymj1nww" path="res://client/scenes/button_handler.gd" id="1_fb6nl"]
+[ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://client/scenes/map.gd" id="1_fb6nl"]
 
 [node name="Map" type="Node2D"]
+script = ExtResource("1_fb6nl")
 
 [node name="Map" type="Sprite2D" parent="."]
 position = Vector2(561, 312)
 scale = Vector2(0.559295, 0.559295)
 texture = ExtResource("1_7vd85")
 
-[node name="Button" type="Node" parent="."]
-script = ExtResource("1_fb6nl")
+[node name="Buttons" type="Node" parent="."]
 
-[node name="Stations" type="Node" parent="Button"]
+[node name="Stations" type="Node" parent="Buttons"]
 
-[node name="2" type="Button" parent="Button/Stations"]
+[node name="2" type="Button" parent="Buttons/Stations"]
 offset_left = 807.0
 offset_top = 340.0
 offset_right = 921.0
 offset_bottom = 397.0
 text = "Here"
 
-[node name="1" type="Button" parent="Button/Stations"]
+[node name="1" type="Button" parent="Buttons/Stations"]
 offset_left = 237.0
 offset_top = 273.0
 offset_right = 327.0
@@ -30,7 +30,7 @@ offset_bottom = 331.0
 text = "Here
 "
 
-[node name="3" type="Button" parent="Button/Stations"]
+[node name="3" type="Button" parent="Buttons/Stations"]
 offset_left = 557.0
 offset_top = 217.0
 offset_right = 664.0
