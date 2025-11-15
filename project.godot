@@ -18,4 +18,9 @@ config/icon="res://icon.svg"
 [autoload]
 
 ButtonHandler="*res://client/scripts/button_handler.gd"
+<<<<<<< HEAD
 ChatBox="*res://client/scenes/ui/chatbox.tscn"
+=======
+AiApi="*res://ai_api.gd"
+SU="*res://server/scripts/server_utilities.gd"
+>>>>>>> e8642daff0943d1fa9fb22a5d6cbf07a4afa19a6
