@@ -1,17 +1,12 @@
 extends Node
 class_name AiApi
 
+# NOTE: PLEASE DO NOT STEAL THIS API KEY I BEG YOU!!!!111
 var GOOGLE_API_KEY = "AQ.Ab8RN6Lwz2hL-JYecVIICyYKFnmy0CArn8vVdvR3Lv4YpIgMqQ"
 var GEMINI_CHAT_URL = (
 	"https://aiplatform.googleapis.com/v1/publishers/google/models/gemini-2.5-flash-lite:generateContent?key=%s"
 	% GOOGLE_API_KEY
 )
-
-# var http: HTTPRequest
-
-# func _ready():
-# http = HTTPRequest.new()
-# add_child(http)
 
 
 func transform_history_for_gemini(history):
@@ -22,7 +17,6 @@ func transform_history_for_gemini(history):
 	return gemini_history
 
 
-# Now this function is async and returns the result string
 func send(messages: Array, http) -> String:
 	var history = transform_history_for_gemini(messages)
 	var payload = {"contents": history, "generationConfig": {"candidateCount": 1}}
@@ -35,7 +29,6 @@ func send(messages: Array, http) -> String:
 		return ""
 	var result = await http.request_completed
 
-	# result is an array [result, response_code, headers, body]
 	var response_code = result[1]
 	var body = result[3]
 	if response_code == 200:

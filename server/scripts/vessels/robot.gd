@@ -41,6 +41,10 @@ PROTOCOL:
 MAP:
 	- TODO: A description of the map will be here.
 
+PLAYERS:
+	- TODO: Map of id -> name
+	- Always refer to players by their name, not id.
+
 API:
 	- Each turn you will be presented with a JSON.
 	- If you are not in a special event, then the JSON has the follwing form:
@@ -50,17 +54,36 @@ API:
 			tasks": [ { "location": Int, "action": String, }, ], # List of tasks.
 			"actions": [Various types] } # List of possible actions.
 		- In this default state of the game, you need to choose an action by responding with the following JSON (example: choose 5th action):
-			{ action = 4 }
+			{ action : 4 }
 			- Add the following fields depending on the type of action:
 				- If the type is "machine":
-					actionType = "restock" | "repair" | "withdraw"
+					actionType: "restock" | "repair" | "withdraw"
 				- If the type is "interaction":
-					message = "Your message to the other player"
-					- Once the interaction has started, you will get the other player's message in the format {player = playerId, message = "lorem ipsum."}.
-					- Once the interaction has started, you can answer with {message = "reply"} or quit by passing {quit = true} as your next message.
-	- TODO: Voting interaction
+					message: "Your message to the other player"
+					- Once the interaction has started, you will get the other player's message in the format {player: playerId, message: "lorem ipsum."}.
+					- Once the interaction has started, you can answer with {message: "reply"} or quit with an empty string as your next message.
+	- There are two types of intrerrupts that might happen: conversation and voting.
+		- If an interrupt happens while you are thinking, it might be, that f.e. the task you wanted to do was not completed or you were not able to move to the target location. Check the next JSON message for changes in location or tasks to find out if the interrupt interrupted a task or movement.
+	- Conversation:
+		- You will get a message from someone:
+			{ id: playerId, message: "Their message" }
+		- Respond with {message: "reply"} or an empty string to quit.
+	- Voting interaction:
+		- Voting starts when you get a list of each other player's message who spoke before you.
+			{ [ { id: n message =: "Their message" }, etc. ] }
+		- You will answer with an argument for you think should be voted out. If someone accused you, defend yourself! Keep your message under 140 characters long!
+			{ message: "Your message" }
+		- Next you will hear the rest of the messages who came after you. If you were the last one, it will be an empty list.
+			{ [ { id: n+1 message: "Their message" }, etc. ] }
+		- After that everyone can have a final say. Use it wisely. If you don't have anything to say, pass an empty string:
+			{ final: "Your final message" }
+		- Next you will get a list of everyone's final messages.
+			{ [ { id: 1 message: "tsratsrat" }, etc ] }
+		- Then you can vote for who you want to kick (NOTE: you can also vote for yourself):
+			{ vote: id }
+		- The player who was voted out will be announced in the observations array. Keep in mind who is still in the game!
 
-IMPORTANT: FROM NOW ON RESPOND ONLY IN JSON
+IMPORTANT: FROM NOW ON RESPOND ONLY IN JSON. YOU WILL BE KILLED IF YOU DON'T.
 
 END INSTRUCTIONS
 """
