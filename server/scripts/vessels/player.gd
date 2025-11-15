@@ -13,6 +13,14 @@ func TEMP_askDialogue(question: String):
 		edit.queue_free()
 	)
 
+func observe(who: int, what: SU.ActionSignal, subject: String) -> void:
+	print("PLAYER " + str(id) + " OBSERVED " + str(who) + " " + SU.actionString(what, subject) + "!")
+	### Send observation to client
+
+func requestActionAtVendingMachine() -> void:
+	TEMP_dialogueAnswer = null
+	TEMP_askDialogue("x to refill or y to repair")
+
 func requestQuestionToFriend() -> void:
 	TEMP_dialogueAnswer = null
 	TEMP_askDialogue("What do you wish to ask?")
@@ -46,6 +54,8 @@ func _process(delta: float) -> void:
 						initiateConversation(firstNotMe)
 					else:
 						print("Nobody else at station!")
+				if Input.is_action_just_pressed("ui_left"):
+					goToVendingMachine()
 			State.CHANGING_STATION:
 				if TEMP_dialogueAnswer != null:
 					var moveTo = int(TEMP_dialogueAnswer)
@@ -68,6 +78,15 @@ func _process(delta: float) -> void:
 						continueChat()
 					else:
 						abortChat()
+					TEMP_dialogueAnswer = null
+			State.AT_VENDING_MACHINE:
+				if TEMP_dialogueAnswer != null:
+					if TEMP_dialogueAnswer == "x":
+						refillVendingMachine()
+					elif TEMP_dialogueAnswer == "y":
+						repairVendingMachine()
+					else:
+						leaveVendingMachine()
 					TEMP_dialogueAnswer = null
 			_:
 				print("Bad state, changing to VOID")
