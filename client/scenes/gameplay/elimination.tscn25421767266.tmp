@@ -1,0 +1,62 @@
+[gd_scene load_steps=9 format=3 uid="uid://chyeoe406odl4"]
+
+[ext_resource type="Texture2D" uid="uid://by4jvw1hbu6gr" path="res://graphics/voting_stage/background.png" id="1_m6opr"]
+[ext_resource type="Script" uid="uid://c7i4baqi8apsr" path="res://client/scenes/gameplay/actors.gd" id="2_jlx5e"]
+[ext_resource type="Texture2D" uid="uid://cm2q428fbpx23" path="res://graphics/voting_stage/actor_1.png" id="2_stv68"]
+[ext_resource type="Texture2D" uid="uid://b2d10n5yuek23" path="res://graphics/voting_stage/actor_2.png" id="3_qv2k8"]
+[ext_resource type="Texture2D" uid="uid://dnn80i0i7adte" path="res://graphics/voting_stage/actor_3.png" id="4_jlx5e"]
+[ext_resource type="Texture2D" uid="uid://d0ilak3ooyesq" path="res://graphics/voting_stage/actor_4.png" id="5_rqfa2"]
+[ext_resource type="Texture2D" uid="uid://be1hm7kbsx8ln" path="res://graphics/voting_stage/actor_5.png" id="6_g4pfh"]
+[ext_resource type="Texture2D" uid="uid://eofr2oqehgtd" path="res://graphics/voting_stage/actor_6.png" id="7_ufk7q"]
+
+[node name="Elimination" type="Node2D"]
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 1149.0
+offset_bottom = 650.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("1_m6opr")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Actors" type="Node" parent="."]
+script = ExtResource("2_jlx5e")
+
+[node name="Actor1" type="Sprite2D" parent="Actors"]
+position = Vector2(168, 113)
+scale = Vector2(0.585165, 0.585165)
+texture = ExtResource("2_stv68")
+
+[node name="Actor2" type="Sprite2D" parent="Actors"]
+position = Vector2(574, 113)
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("3_qv2k8")
+
+[node name="Actor3" type="Sprite2D" parent="Actors"]
+position = Vector2(957, 113)
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("4_jlx5e")
+
+[node name="Actor4" type="Sprite2D" parent="Actors"]
+position = Vector2(168, 327)
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("5_rqfa2")
+
+[node name="Hitbox" type="Control" parent="Actors/Actor4"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -179.487
+offset_top = -165.812
+offset_right = 31.5128
+offset_bottom = 50.188
+
+[node name="Actor5" type="Sprite2D" parent="Actors"]
+position = Vector2(574, 327)
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("6_g4pfh")
+
+[node name="Actor6" type="Sprite2D" parent="Actors"]
+position = Vector2(957, 327)
+scale = Vector2(0.585, 0.585)
+texture = ExtResource("7_ufk7q")
