@@ -12,7 +12,8 @@ var conversationBuddy = null
 
 var artefacts: int = 0
 var interrupted: bool = false
-var interruptible: bool = false
+var thinking: bool = false
+
 
 func _init(_id: int, _server: Server) -> void:	
 	id = _id
@@ -53,6 +54,9 @@ func meetingPhase2() -> void:
 func meetingForward(who: int, text: String) -> void:
 	pass # OVERRIDE THIS
 
+func chattable() -> bool:
+	return state == State.AT_STATION or state == State.CHANGING_STATION or state == State.AT_VENDING_MACHINE
+
 func startVoting() -> void:
 	state = State.MEETING_VOTE
 	requestVote()
@@ -85,7 +89,7 @@ func releaseFromVoting() -> void:
 	conversationBuddy = null
 	
 func interrupt() -> void:
-	interrupted = interruptible
+	interrupted = thinking
 
 func goToMeeting() -> void:
 	interrupt()
@@ -205,11 +209,14 @@ func goToVendingMachine() -> void:
 
 # I would like to talk with vesselId
 func initiateConversation(vesselId: int) -> void:
-	state = State.CHATTING_SENDER
-	conversationBuddy = vesselId
-	server.vessels[vesselId].recieveConversationFrom(id)
-	requestQuestionToFriend()
-	currentPosition.shout(id, ServerUtilities.ActionSignal.START_CHAT, str(conversationBuddy))
+	if server.vessels[vesselId].chattable():
+		state = State.CHATTING_SENDER
+		conversationBuddy = vesselId
+		server.vessels[vesselId].recieveConversationFrom(id)
+		requestQuestionToFriend()
+		currentPosition.shout(id, ServerUtilities.ActionSignal.START_CHAT, str(conversationBuddy))
+	else:
+		print(str(id) + " can't chat with " + str(vesselId) + " because they're too busy")
 
 func _process(delta: float) -> void:
 	pass

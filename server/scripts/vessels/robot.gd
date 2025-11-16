@@ -207,14 +207,17 @@ func parseJson(string):
 # Toby Fox ahh function
 func parseAction(string):
 	var json = parseJson(string)
+	if json == null:
+		return
 	if !json.has("action"):
 		print("Robot %s was lobotomized: %s" % [id, json])
 		lobotomy("JSON did not have the required field.")
+		return
 	if int(json.action) >= playerState.actions.size():
 		print("Robot %s was lobotomized: %s" % [id, json])
 		lobotomy("JSON field had the wrong value.")
 		return
-	print(str(id) + ": " + str(json))
+	#print(str(id) + ": " + str(json))
 	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
@@ -224,7 +227,7 @@ func parseAction(string):
 	else:
 		match act.type:
 			"movement":
-				print(str(id) + ": move to " + str(act.destination))
+				#print(str(id) + ": move to " + str(act.destination))
 				changeStation(act.destination)
 			"machine":
 				#print("Robot %s went to the vending machine" % id)
@@ -234,7 +237,6 @@ func parseAction(string):
 				if idx != -1:
 					var task = playerState["tasks"].pop_at(idx)
 					match task:
-						# TODO do the stuff @Zen
 						"withdraw":
 							print(str(id) + ": withdraw")
 							state = State.AT_STATION
@@ -245,7 +247,6 @@ func parseAction(string):
 							print(str(id) + ": refill")
 							refillVendingMachine()
 				else:
-					# Just take from the machine (default actions)
 					state = State.AT_STATION
 
 			"conversation":
@@ -268,7 +269,7 @@ func updateState():
 		playerState["actions"].append({"type": "movement", "destination": dst.id})
 
 	for vesselId in currentPosition.vesselsAtStation:
-		if vesselId != id:
+		if vesselId != id and server.vessels[vesselId].chattable():
 			playerState["actions"].append({"type": "conversation", "player": vesselId})
 	playerState["actions"].append({"type": "machine"})
 
@@ -293,22 +294,22 @@ func _process(delta: float) -> void:
 
 				print(str(id) + ": acting now!")
 				idle = false
-				interruptible = true
+				thinking = true
 				parseAction(await action(playerState))
-				interruptible = false
+				thinking = false
 				idle = true
 				actTimer = 0
 
 		State.CHATTING_CONTINUE:
 			if idle:
-				interruptible = true
+				thinking = true
 				idle = false
 				if conversationBuddy == null or recievedQuestion == null:
 					abortChat()
 				else:
 					var msg = {"id": conversationBuddy, "message": recievedQuestion}
 					var response = await action(msg)
-					interruptible = false
+					thinking = false
 					if !interrupted:
 						var json = parseJson(response)
 						if !json.has("message") or json.message == "":
