@@ -157,13 +157,19 @@ func action(message) -> String:
 
 
 func parseJson(string):
+	# Absolute nightmare
 	var regex = RegEx.new()
 	regex.compile("```json(.*?)```")
 	var result = regex.search(string)
 	if result:
 		string = result.get_string(1)
 	else:
-		string = string
+		regex.compile("\\{.*\\}")
+		result = regex.search(string)
+		if result:
+			string = result.get_string(1)
+		else:
+			string = string
 
 	string = string.replace("```json", "")
 	string = string.replace("```", "")
