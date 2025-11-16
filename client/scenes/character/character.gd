@@ -2,15 +2,17 @@ extends CharacterBody2D
 
 @export var is_player = false
 @export var move_speed := 120.0
+var character_id = -1
+
 var target_pos = Vector2(0, 0)
 
 func _ready():
 	target_pos = global_position
 
 func _input(event):
-	if event is InputEventMouseButton:
-		set_target(event.position)
-
+	if is_player:
+		if event is InputEventMouseButton:
+			set_target(event.position)
 
 func set_target(pos: Vector2):
 	target_pos = pos

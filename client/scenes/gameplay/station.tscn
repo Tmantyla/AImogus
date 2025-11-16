@@ -47,3 +47,4 @@ texture = ExtResource("3_n1mxr")
 
 [node name="Character" parent="." instance=ExtResource("4_n1mxr")]
 position = Vector2(170, 246)
+is_player = true
