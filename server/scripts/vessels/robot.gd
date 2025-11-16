@@ -273,7 +273,7 @@ func _process(delta: float) -> void:
 		State.VOID:
 			print("Robot " + str(id) + " wants to act but is VOID")
 		State.AT_STATION:
-			if actTimer > 5 and idle:
+			if actTimer > randi() % 1000 and idle:
 				actTimer = 0
 
 				updateState()
