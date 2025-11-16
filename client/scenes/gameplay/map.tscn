@@ -1,7 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://cyqd17yqbl36l"]
+[gd_scene load_steps=5 format=3 uid="uid://cyqd17yqbl36l"]
 
 [ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://scripts/scenes/map.gd" id="1_vado4"]
-[ext_resource type="Texture2D" uid="uid://rt2bxngegpe3" path="res://assets/graphics copy/map.png" id="2_5jlrt"]
+[ext_resource type="Texture2D" uid="uid://rt2bxngegpe3" path="res://assets/graphicsupdate/map.png" id="2_5jlrt"]
+
+[sub_resource type="GDScript" id="GDScript_5jlrt"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_5jlrt"]
 radius = 44.0114
@@ -17,6 +19,7 @@ texture = ExtResource("2_5jlrt")
 [node name="Buttons" type="Node" parent="."]
 
 [node name="5" type="Area2D" parent="Buttons"]
+script = SubResource("GDScript_5jlrt")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Buttons/5"]
 position = Vector2(1064, 290)
@@ -57,6 +60,8 @@ shape = SubResource("CircleShape2D_5jlrt")
 [node name="Sprite2D" type="Sprite2D" parent="Buttons/1"]
 
 [connection signal="input_event" from="Buttons/5" to="." method="_on__input_event"]
+[connection signal="mouse_entered" from="Buttons/5" to="Buttons/5" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="Buttons/5" to="Buttons/5" method="_on_mouse_exited"]
 [connection signal="input_event" from="Buttons/4" to="." method="_on__input_event"]
 [connection signal="input_event" from="Buttons/3" to="." method="_on__input_event"]
 [connection signal="input_event" from="Buttons/2" to="." method="_on__input_event"]

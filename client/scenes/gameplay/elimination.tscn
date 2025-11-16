@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://chyeoe406odl4"]
 
-[ext_resource type="Texture2D" uid="uid://by4jvw1hbu6gr" path="res://assets/graphics/voting_stage/background.png" id="1_c0ujs"]
+[ext_resource type="Texture2D" uid="uid://by4jvw1hbu6gr" path="res://assets/graphicsupdate/voting_stage/background.png" id="1_c0ujs"]
 [ext_resource type="Script" uid="uid://c7i4baqi8apsr" path="res://scripts/actors.gd" id="2_jlx5e"]
-[ext_resource type="Texture2D" uid="uid://cm2q428fbpx23" path="res://assets/graphics/voting_stage/actor_1.png" id="3_v413o"]
-[ext_resource type="Texture2D" uid="uid://b2d10n5yuek23" path="res://assets/graphics/voting_stage/actor_2.png" id="4_umjm6"]
-[ext_resource type="Texture2D" uid="uid://dnn80i0i7adte" path="res://assets/graphics/voting_stage/actor_3.png" id="5_sijcl"]
-[ext_resource type="Texture2D" uid="uid://d0ilak3ooyesq" path="res://assets/graphics/voting_stage/actor_4.png" id="6_banni"]
-[ext_resource type="Texture2D" uid="uid://be1hm7kbsx8ln" path="res://assets/graphics/voting_stage/actor_5.png" id="7_rq03e"]
-[ext_resource type="Texture2D" uid="uid://eofr2oqehgtd" path="res://assets/graphics/voting_stage/actor_6.png" id="8_5jpot"]
+[ext_resource type="Texture2D" uid="uid://cm2q428fbpx23" path="res://assets/graphicsupdate/voting_stage/actor_1.png" id="3_v413o"]
+[ext_resource type="Texture2D" uid="uid://b2d10n5yuek23" path="res://assets/graphicsupdate/voting_stage/actor_2.png" id="4_umjm6"]
+[ext_resource type="Texture2D" uid="uid://dnn80i0i7adte" path="res://assets/graphicsupdate/voting_stage/actor_3.png" id="5_sijcl"]
+[ext_resource type="Texture2D" uid="uid://d0ilak3ooyesq" path="res://assets/graphicsupdate/voting_stage/actor_4.png" id="6_banni"]
+[ext_resource type="Texture2D" uid="uid://be1hm7kbsx8ln" path="res://assets/graphicsupdate/voting_stage/actor_5.png" id="7_rq03e"]
+[ext_resource type="Texture2D" uid="uid://eofr2oqehgtd" path="res://assets/graphicsupdate/voting_stage/actor_6.png" id="8_5jpot"]
 
 [node name="Elimination" type="Node2D"]
 

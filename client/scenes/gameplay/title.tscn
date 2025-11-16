@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfrnim8coyqrw"]
+
+[ext_resource type="Texture2D" uid="uid://br8oebh16v6e3" path="res://assets/graphicsupdate/title_screen/title_space.png" id="1_rglja"]
+
+[node name="Title" type="Node2D"]
+
+[node name="TitleSpace" type="Sprite2D" parent="."]
+position = Vector2(553, 334)
+scale = Vector2(2.65953, 2.65953)
+texture = ExtResource("1_rglja")

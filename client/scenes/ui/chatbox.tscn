@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://iqiokke2gfpj"]
 
-[ext_resource type="Script" uid="uid://cekuglqdgxki" path="res://client/scenes/ui/panel.gd" id="1_enjbo"]
+[ext_resource type="Script" uid="uid://cekuglqdgxki" path="res://scenes/ui/panel.gd" id="1_enjbo"]
 
 [node name="Chatbox" type="CanvasLayer"]
 

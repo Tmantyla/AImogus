@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://fjfwyinfdarr"]
 
 [ext_resource type="Script" uid="uid://bqef1d1vh5uyr" path="res://scripts/scenes/station.gd" id="1_x5133"]
-[ext_resource type="Texture2D" uid="uid://dgqrol1bvfcu2" path="res://assets/graphics/train_station_stage/background.png" id="2_75lwc"]
-[ext_resource type="Texture2D" uid="uid://cvv50n57hmrv8" path="res://assets/graphics/train_station_stage/whole_train.png" id="3_n1mxr"]
+[ext_resource type="Texture2D" uid="uid://dgqrol1bvfcu2" path="res://assets/graphicsupdate/train_station_stage/background.png" id="2_75lwc"]
+[ext_resource type="Texture2D" uid="uid://cvv50n57hmrv8" path="res://assets/graphicsupdate/train_station_stage/whole_train.png" id="3_n1mxr"]
 [ext_resource type="PackedScene" uid="uid://6elww40bqr0p" path="res://scenes/vending_machine/vending_machine.tscn" id="5_my526"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_my526"]
