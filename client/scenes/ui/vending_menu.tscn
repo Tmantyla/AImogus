@@ -1,0 +1,25 @@
+[gd_scene load_steps=2 format=3 uid="uid://dko6awsvd2udx"]
+
+[ext_resource type="Script" uid="uid://db0lkx178vi0l" path="res://scenes/ui/vending_menu.gd" id="1_prq2t"]
+
+[node name="VendingMenu" type="CanvasLayer"]
+script = ExtResource("1_prq2t")
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Button" type="Button" parent="Panel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Button2" type="Button" parent="Panel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="Button3" type="Button" parent="Panel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0

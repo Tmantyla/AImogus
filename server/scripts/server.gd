@@ -228,10 +228,12 @@ func _draw() -> void:
 
 @rpc("any_peer")
 func handle_message(type: String, payload: Dictionary):
+	print(type, payload)
 	var sender_id := multiplayer.get_remote_sender_id()
 	match type:
 		"go_to_change_location": # Tää on niiku kun sä meet siihen kartta-menuun
 			# Ei payloadia
+			#done osittain
 			pass
 		"leave_change_location": # Tää on niikukun sä lähet siitä kartta menusta ja et vaihdakkaan paikkaa
 			# Ei payloadia
@@ -249,6 +251,7 @@ func handle_message(type: String, payload: Dictionary):
 			# ja lähettää sen takas
 			pass
 		"go_to_vending_machine":
+			#done
 			# Ei payload
 			pass
 		"send_message": # sit kun oot eka joka laittaa viestiä keskustelussa nii tää
@@ -275,6 +278,7 @@ func handle_message(type: String, payload: Dictionary):
 			# payload = { "message": String }
 			pass
 		"vote":
+			# done
 			# payload = { "vote": int }
 			# Tässä kans toi "vote" on se player id. Kun voting alkaa nii mä 
 			# lähetän sulle ne kaikki IDt sitten nii voit käyttää niitä

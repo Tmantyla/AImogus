@@ -15,3 +15,8 @@ func _ready():
 	
 func update_sprite():
 	$Sprite2D.texture = TEXTURES[current_state]
+
+func _on_area_2d_input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		Server.send_event("go_to_vending_machine")
+		VendingMenu.open(self)

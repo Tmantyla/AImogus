@@ -29,12 +29,7 @@ func handle_message(type: String, payload: Dictionary):
 	if type == "game_started":
 		print("GAME STARTED")
 		send_event("affirmative")
-		
 
-# Send event to server
 func send_event(name: String, payload: Dictionary = {}):
-	if multiplayer.is_server() or multiplayer.get_unique_id() != 0:
-		rpc_id(1, "handle_message", name, payload)
-		print("CLIENT SENT:", name, payload)
-	else:
-		print("CLIENT: not connected, can't send")
+	rpc_id(1, "handle_message", name, payload)
+	print("CLIENT SENT:", name, payload)

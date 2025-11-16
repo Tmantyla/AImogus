@@ -32,14 +32,15 @@ func _on_hover_exit(actor):
 
 func _on_click(event, actor):
 	if event is InputEventMouseButton and event.pressed:
+		if actor.name == "VoteButton":
+			vote()
+		else:
+			if selected_actor and selected_actor != actor:
+				_unset_selected(selected_actor)
 
-		# undo selection on previous
-		if selected_actor and selected_actor != actor:
-			_unset_selected(selected_actor)
+			selected_actor = actor
+			_set_selected(actor)
 
-		selected_actor = actor
-		_set_selected(actor)
-		print("Selected actor:", actor.name)
 
 
 func _set_hover(actor, state):
@@ -57,6 +58,18 @@ func _set_hover(actor, state):
 func _set_selected(actor):
 	actor.modulate = Color(2, 2, 2, 1)
 
+func speak():
+	var message = "hello"
+	Server.send_event("speak_at_meeting", message)
 
 func _unset_selected(actor):
 	actor.modulate = Color(1, 1, 1, 1)
+	
+func can_vote():
+	return true
+	
+func vote():
+	if can_vote():
+		if selected_actor:
+			var vote_id = int(str(selected_actor.name)[-1]) - 1
+			Server.send_event("vote",  {"vote": vote_id})

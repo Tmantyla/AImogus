@@ -16,3 +16,11 @@ func _ready():
 		portrait.texture = SPEAKER_SPRITES[PlayerState.conversation_id]
 	else:
 		portrait.texture = null
+	if PlayerState.player_started:
+		var message = "Hello!"
+		Server.send_event("send_message", {"message": message})
+	else:
+		pass
+		
+func send_message:
+	

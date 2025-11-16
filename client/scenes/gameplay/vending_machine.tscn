@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cyyefe513pnm0"]
 
-[ext_resource type="Script" uid="uid://crfwmb1wacehq" path="res://client/scripts/scenes/vending_machine.gd" id="1_om6k2"]
-[ext_resource type="Texture2D" uid="uid://c4f8aad8aopex" path="res://client/assets/placeholder/vendingmachine.png" id="2_umrwv"]
+[ext_resource type="Script" uid="uid://crfwmb1wacehq" path="res://scripts/scenes/vending_machine.gd" id="1_om6k2"]
+[ext_resource type="Texture2D" uid="uid://c4f8aad8aopex" path="res://assets/placeholder/vendingmachine.png" id="2_umrwv"]
 
 [node name="Vendingmachine" type="Node2D"]
 script = ExtResource("1_om6k2")
@@ -12,13 +12,6 @@ scale = Vector2(0.238177, 0.238177)
 texture = ExtResource("2_umrwv")
 
 [node name="Buttons" type="Node" parent="."]
-
-[node name="Back" type="Node" parent="Buttons"]
-
-[node name="Back" type="Button" parent="Buttons/Back"]
-offset_right = 469.0
-offset_bottom = 79.0
-text = "Back"
 
 [node name="VendingMachineActions" type="Node" parent="Buttons"]
 

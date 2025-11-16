@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://camv5rvo0ohyb"]
+[gd_scene load_steps=4 format=3 uid="uid://camv5rvo0ohyb"]
 
-[ext_resource type="Script" uid="uid://eewafo213vhj" path="res://client/scenes/ui/minigame_fix.gd" id="1_jr40s"]
-[ext_resource type="Texture2D" uid="uid://c3sluwj6td0rp" path="res://client/assets/placeholder/fix.jpg" id="1_wybpp"]
+[ext_resource type="Script" uid="uid://eewafo213vhj" path="res://scenes/ui/minigame_fix.gd" id="1_jr40s"]
+[ext_resource type="Texture2D" uid="uid://c3sluwj6td0rp" path="res://assets/placeholder/fix.jpg" id="1_wybpp"]
+[ext_resource type="PackedScene" uid="uid://6elww40bqr0p" path="res://scenes/vending_machine/vending_machine.tscn" id="3_0fqyx"]
 
 [node name="MinigameFix" type="CanvasLayer"]
 script = ExtResource("1_jr40s")
@@ -10,3 +11,5 @@ script = ExtResource("1_jr40s")
 position = Vector2(588, 335)
 scale = Vector2(3.07377, 2.62681)
 texture = ExtResource("1_wybpp")
+
+[node name="VendingMachine" parent="." instance=ExtResource("3_0fqyx")]

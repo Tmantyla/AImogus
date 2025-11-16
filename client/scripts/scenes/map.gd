@@ -1,7 +1,9 @@
 extends Node2D
 
-func _on__input_event(viewport: Node, event: InputEvent, shape_idx: int) -> void:
+func _on__input_event(viewport, event, shape_idx):
 	if event is InputEventMouseButton and event.pressed:
-		PlayerState.station = self.name
+		var clicked_button = get_child(shape_idx)
+		PlayerState.station = clicked_button.name
+
+		Server.send_event("change_location", {"location": PlayerState.station})
 		get_tree().change_scene_to_file("res://scenes/gameplay/station.tscn")
-		
