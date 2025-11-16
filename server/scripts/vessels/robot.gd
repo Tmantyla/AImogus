@@ -191,12 +191,7 @@ func parseJson(string):
 	if result:
 		string = result.get_string(1)
 	else:
-		regex.compile("\\{.*\\}")
-		result = regex.search(string)
-		if result:
-			string = result.get_string(1)
-		else:
-			string = string
+		string = string
 
 	string = string.replace("```json", "")
 	string = string.replace("```", "")
