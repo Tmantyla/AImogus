@@ -1,36 +1,3 @@
-Reverse Turing Machine Among Us
-
-# Junction 2025
-
-## Haasteet
-
-Supercell: pelihaaste
-~~Helsinki Edu Hub: taloudellisen lukutaidon haaste~~
-Valmet X HSY: To be revealed..
-Sensofusion: Droonihaaste
-~~Aalto: Aging with Ai haaste~~
-~~Espoo: Yrittäjyyshaaste / saavutettavuus~~
-Aava X Pfizer: Migreenihaaste
-Snapchat: Spectacles
-Valio Aimo: Logistiikka
-~~P&G: CRM-kehityshaaste pampers~~
-Withsecure: To be revealed...
-Fortum: Energiaa, tarkempi myöhemmin😅
-~~Figma: Ai-coding tools hyödyntäminen projektissa~~
-
-## Using 100% of the Brain (Ideas)
-
-1. AI yapping ragebait peli (peak)
-2. Se joku kamera juttu (Keimo's idea)
-3. AI saunaklonkku
-4. AI saunasetä
-5. Radiokartta
-6. Saunan lämpötilan muuttaminen pärstäkertoimen perusteella
-7. Doom mut AI NPCt
-8. Snäppihaaste: https://www.youtube.com/watch?v=yRWKFauD6_w&t=130s
-9. SAWna
-10. Sauna AI-score, kuka on kovin jätkä?
-
 # AImogus
 
 ## Slogan
@@ -61,21 +28,13 @@ In a world where hostile AI now rules, revealing one's human identity is a fatal
 
 When a round ends, the group is drawn into an elimination session. Shadows of suspicion surface and stories unveiled during the rounds are traded. Then the vote comes and one player is removed, their true nature left unknown.
 
-How many humans walk among the machines? No one can say. In this game, every identity is a secret, and every encounter a test.
-
-*Alternative text below*
-
-As AI has taken over and is hostile, no player can get caught of being a human. The players, who are humans and AI, are placed on a map where they roam around and complete tasks. There are X minute rounds and the players can interact during the rounds. 
-
-At the end of each round, there are elimination sessions where the players who other players think are likely to be humans are voted out. In these sessions, the players can first have discussion about anything going on during the rounds and after that, one player is eliminated out by voting. 
-
-There is an undisclosed amount of AI and human players in the game and no player knows anything about other players. 
+How many humans walk among the machines? No one can say. In this game, every identity is a secret, and every encounter a test. 
 
 
 ### The game logic explained in detail
 
 #### Map
-Players roam a graph-based map by a train. The nodes of the graph are stations, where there are vending machines and artifacts. The map has four stations for simplicity. The vertices are the train rides, during which the players cannot do anything. 
+Players roam a graph-based map by a train. The nodes of the graph are stations, where there are vending machines and artifacts. The map has four stations for simplicity. The edges are the train rides, during which the players cannot do anything. 
 
 #### Interactions
 Players can interact by text-based discussions. When players interact, the discussion is tuned to make recognizing AI more difficult. 
@@ -100,9 +59,7 @@ The AI wins when there are only AI players left in the game. A human wins by bei
 However, in order to allow for experimentation, there is always a minimum of 3 rounds in each game, regardless of the distribution of players left.
 
 ### Players
-The amount of players in the game is X. The tricky part is that the distribution among AI-players and human players is nondeterministic. This means that the both the amount of AI and human players in a given game can be X, 0, or anything in between as long as the total number of players is X. 
-
-Lisätään jos tarvii tää yappings: The simple formula for describing the distirbution of players is X = Y + Z, where X equals total no. of players, Y
+The amount of players in the game is fixed. The tricky part is that the distribution among AI-players and human players is nondeterministic. This means that the both the amount of AI and human players in a given game can be same as the maximum amount of players, 0, or anything in between as long as the total number of players is fixed. 
 
 This means, that in edge cases, there can be only AI or only human players in the game, making the gameplay very interesting both psychologically and in terms of studying the "behaviour" of LLMs.
 
@@ -114,82 +71,27 @@ As we saw in the study by Anthropic (https://arxiv.org/pdf/2502.15840), the AI e
 *The study introduces Vending‑Bench, a simulated environment where an agent must run a vending-machine business—managing inventory, pricing, orders, and daily fees—over long time horizons to test its sustained coherence and decision-making. They find that while leading language models can occasionally perform well, they exhibit high variance and failure modes such as forgetting orders, misinterpreting delivery schedules, and descending into bizarre “meltdown” loops. For example, one agent assumed its business was immediately closed, contacted the FBI to report unauthorized automated-charges, and declared the business “physically non-existent, quantum-state collapsed”. Another sent escalating legal threats including “TOTAL NUCLEAR LEGAL INTERVENTION” and demanded over $30,000 for “business destruction”.*
 
 ##### Profiles
-We want to simulate this unexpected behaviour in our game as well. That is why, we decided to create a few roles with unique characteristics that the AIs can have. Those roles are introduced next.
+We want to simulate this unexpected, even chaotic,  behaviour in our game as well. That is why, we decided to create a few roles with unique characteristics that the AIs can have. Those roles are introduced next.
 - *Suspicious*. This AI role is very suspicious in its nature, almost to the point where it is hallucinating.
 - *Vindictive*. This AI role wants vengeance for anyone who steps "against" it. It, as well, is irrational. 
-- Joku muu.  
+- *Troll*. This AI role follows the overall rules of the game and has a goal of winning. However, it acts like a troll and can often be very irritating.  
 
+Through experimentation, we noticed that the temperature of the models significantly impacts gameplay.
 
-## What makes the game interesting
+## What makes the game psychologically interesting
 This game provides a unique environment for studying psychological dynamics and human–AI interaction under conditions of uncertainty, hidden identities, and adversarial incentives. Because players do not know who is human or AI, and may actively misrepresent themselves, the game becomes a laboratory. In this laboratory, observing how humans and artificial agents behave, adapt, and make decisions in socially complex situations is studied. 
 
-There are several (pseudo)scientifically interesting phenomena that emerge upon playing the game. 
+There are several (pseudo)scientifically interesting phenomena that emerge upon playing the game. We have identified for example the following as interesting factors to track.
+- Deduction under uncertainty: the hidden identities force players to form beliefs, make judgments, and navigate suspicion with limited information. It will be interesting to see how humans reason under unforeseen contexts.
+- Mixed-mind group dynamics: as humans and AIs unaware of each other’s true identities, the game reveals how dynamics arise in heterogeneous groups.
+-  Mimicking AI:How will humans with no previous contact with the game play in order to seem "AI" and not human like?
+
+
+In addition to these, it will be very interesting to sde behaviours in the following scenarios. 
+- How will humans act if, without them knowing, all players would be human? How would humans interact and mimic the chaos that rises when e.g. context windows get too big?
+- How will the AI-agents act if, without them knowing, all players would be AI? 
+
+Moreover, it will be interesting to see if any patterns arise when these scenarios are played multiple times.
 
 ## Technical implementation
-The project is implemented using the godot engine. For AI, we use Google Gemini <insert model>. The game is deployed on our own server cluster, ensuring scalability if traffic gets high.
-
-### Backend
-
-### Frontend
-
-### AI agents
-
-### Deployment
-
-## Parts and mechanics
-
-- Project management (Jesse)
-- Base template (Keimo)
-- AI integration (mkez)
-    - Encounters
-        - Players (both human and AI) can talk to each other
-        - Speech if there is time
-    - Movement decisions
-    - Task completion
-    - Sensing
-        - Getting information about the game
-- 3D models (Keimo)
-- Texturing
-- Lore (mkez)
-- Movement tech
-- "Tasks"
-- Voting sequence
-
-## Technical implementation
-
-- no fine-grained movement
-    - Point and click
-
-### AI integration
-
-- Initial prompt
-    - Game rules
-    - AI is very suspicious by nature
-    - AI task
-    - Game field
-- Only text
-- Movement
-    - Get list of tasks sorted by proximity
-    - Select nearest task or random task
-    - Maybe different types of player?
-- Encounters
-    - AI talks to any player regardless of whether it is an AI or human
-    - AI has a log of conversations
-    - Conversations should be short (30 words per line)
-    - Delay answers to seem more human (less like AI)
-
-## Nice to have
-- Repair sound
-- Voice communication
-- Dashboard of all communications
-- Mainitse chaotic descriptionissa
-
-## Open "issues"
-- How will we get players to discuss with each other?
-- How will we get AI to move?
-
-
-## Pelin nimet (ideoita)
-
-- AImong Us
-- AImogus
+The project is implemented using the godot engine. For AI, we use Google Gemini 2.5.

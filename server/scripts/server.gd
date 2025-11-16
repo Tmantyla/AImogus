@@ -13,8 +13,18 @@ var stations: Array[Station] = []
 
 var ai = AiApi.new()
 
+var inMeeting = false
+var timeToNextMeeting: float = 5.0
+var meetingSpeakerIndex = null
+var meetingSpeakerOrder: Array[int] = []
+var meetingPhase = 0
+var finalSayDictionary: Dictionary[int, String] = {}
+var howManyReady = 0
+var voteDictionary: Dictionary[int, int] = {}
+var speaksList: Array[String] = []
 
 func _ready():
+	
 	add_child(ai)
 
 	for vertex in MAP_VERTICES:
@@ -36,15 +46,139 @@ func _ready():
 	add_child(debugPlayer)
 	vessels[0] = debugPlayer
 	vessels[1] = Robot.new(1, self)
-	vessels[2] = Player.new(2, self)
 	for i in range(3, 10):
 		vessels[i] = Robot.new(i, self)
 		add_child(vessels[i])
 
 	add_child(vessels[1])
 
+func startMeetingPhase2() -> void:
+	meetingPhase = 2
+	meetingSpeakerIndex = null
+	for id in vessels:
+		vessels[id].meetingPhase2()
+
+func startVoting() -> void:
+	meetingPhase = 3
+	howManyReady = 0
+	for id in vessels:
+		vessels[id].startVoting()
+
+func recieveFinalSay(id: int, text: String) -> void:
+	howManyReady += 1
+	finalSayDictionary[id] = text
+	if howManyReady >= meetingSpeakerOrder.size():
+		startVoting()
+
+func resetTimeToNextMeeting() -> void:
+	timeToNextMeeting = 100.0
+
+func broadcastLobotomy(id: int, reason: String) -> void:
+	for vs in vessels:
+		vessels[vs].observe(id, ServerUtilities.ActionSignal.LOBOTOMY, reason)
+
+func voteOut(id: int) -> void:
+	for vs in vessels:
+		vessels[vs].observe(id, ServerUtilities.ActionSignal.VOTED_OUT, "")
+	vessels[id].death()
+
+func concludeVoting() -> void:
+	howManyReady = 0
+	meetingPhase = 0
+	meetingSpeakerIndex = 0
+	speaksList = []
+	
+	var vote_counts := {}
+
+	# Count votes each player received
+	for voter_id in voteDictionary.keys():
+		var voted_player_id = voteDictionary[voter_id]
+		vote_counts[voted_player_id] = vote_counts.get(voted_player_id, 0) + 1
+
+	# Determine the highest vote count
+	var max_votes := 0
+	for count in vote_counts.values():
+		if count > max_votes:
+			max_votes = count
+
+	# Find all players with this max count
+	var winners := []
+	for player_id in vote_counts.keys():
+		if vote_counts[player_id] == max_votes:
+			winners.append(player_id)
+
+	# Output
+	if winners.size() == 1:
+		print("Voting out: ", winners[0])
+		voteOut(winners[0])
+	else:
+		print("Tie, nobody was voted out")
+	
+	finalSayDictionary = {}
+	voteDictionary = {}
+	resetTimeToNextMeeting()
+	for vs in vessels:
+		vessels[vs].releaseFromVoting()
+	inMeeting = false
+	
+
+func recieveVote(id: int, vote: int):
+	howManyReady += 1
+	voteDictionary[id] = vote
+	if howManyReady >= meetingSpeakerOrder.size():
+		concludeVoting()
+
+func recieveTalkFromSpeaker(text: String) -> void:
+	speaksList.append(text)
+	for id in vessels:
+		if id != currentSpeaker().id:
+			vessels[id].meetingForward(currentSpeaker().id, text)
+	if meetingSpeakerIndex != meetingSpeakerOrder.size()-1:
+		meetingSpeakerIndex += 1
+		currentSpeaker().recieveMeetingTurn()
+	else:
+		startMeetingPhase2()
+		
+
+func currentSpeaker() -> Vessel:
+	if inMeeting and meetingSpeakerOrder.size() > 0 and meetingSpeakerIndex != null:
+		return vessels[meetingSpeakerOrder[meetingSpeakerIndex]]
+	else:
+		print("ERROR: There is no meeting at the moment, meeting:" + str(inMeeting) + " Speakers: " + str(meetingSpeakerOrder.size()) + " Speaker: " + str(meetingSpeakerIndex))
+		return vessels[0]
+
+func startMeeting():
+	print("Meeting starting")
+	meetingPhase = 1
+	timeToNextMeeting = 0
+	inMeeting = true
+	meetingSpeakerOrder = vessels.keys()
+	
+	for vessel in vessels:
+		vessels[vessel].goToMeeting()
+	
+	meetingSpeakerOrder.shuffle()
+	meetingSpeakerIndex = 0
+	
+	currentSpeaker().recieveMeetingTurn()
+	
 
 func _process(delta):
-	for id in range(vessels.size()):
-		if id != 0:
-			vessels[id]._process(delta)
+	if !inMeeting:
+		timeToNextMeeting -= delta
+		if timeToNextMeeting < 0:
+			startMeeting()
+			resetTimeToNextMeeting()
+	else:
+		pass
+	queue_redraw()
+	
+func _draw() -> void:
+	if inMeeting:
+		draw_string(ThemeDB.fallback_font, Vector2(600, 40), "Meeting Ongoing!", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(0, 1, 1))
+	for i in range(speaksList.size()):
+		draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+	var fs = finalSayDictionary.values()
+	for i in range(fs.size()):
+		draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+	draw_string(ThemeDB.fallback_font, Vector2(30, 30), "Time to next meeting: " + str(int(timeToNextMeeting)), HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))

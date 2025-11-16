@@ -17,6 +17,21 @@ func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> v
 	print("PLAYER " + str(id) + " OBSERVED " + str(who) + " " + ServerUtilities.actionString(what, subject) + "!")
 	### Send observation to client
 
+func meetingForward(who: int, text: String) -> void:
+	pass ### TODO: Send this to client
+
+func requestVote() -> void:
+	TEMP_dialogueAnswer = null
+	TEMP_askDialogue("Who will you vote for?")
+
+func requestMeetingAnswerPhase1() -> void:
+	TEMP_dialogueAnswer = null
+	TEMP_askDialogue("What will you say in the meeting?")
+
+func requestMeetingAnswerPhase2() -> void:
+	TEMP_dialogueAnswer = null
+	TEMP_askDialogue("What is your final say before voting?")
+
 func requestActionAtVendingMachine() -> void:
 	TEMP_dialogueAnswer = null
 	TEMP_askDialogue("x to refill or y to repair")
@@ -88,6 +103,20 @@ func _process(delta: float) -> void:
 						repairVendingMachine()
 					else:
 						leaveVendingMachine()
+					TEMP_dialogueAnswer = null
+			State.MEETING_WAITING:
+				pass
+			State.MEETING_TURN:
+				if TEMP_dialogueAnswer != null:
+					sayInMeeting(TEMP_dialogueAnswer)
+					TEMP_dialogueAnswer = null
+			State.MEETING_FINALSAY:
+				if TEMP_dialogueAnswer != null:
+					finalSayInMeeting(TEMP_dialogueAnswer)
+					TEMP_dialogueAnswer = null
+			State.MEETING_VOTE:
+				if TEMP_dialogueAnswer != null:
+					vote(int(TEMP_dialogueAnswer))
 					TEMP_dialogueAnswer = null
 			_:
 				print("Bad state, changing to VOID")
