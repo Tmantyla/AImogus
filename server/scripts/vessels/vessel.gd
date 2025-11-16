@@ -2,6 +2,8 @@ extends Node2D
 class_name Vessel
 const State = ServerUtilities.VS
 
+var recieved_commands: Dictionary[String, String] = {}
+
 var id = -1
 var currentPosition: Station
 var state: State = State.VOID
