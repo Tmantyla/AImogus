@@ -1,9 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://fjfwyinfdarr"]
+[gd_scene load_steps=7 format=3 uid="uid://fjfwyinfdarr"]
 
 [ext_resource type="Script" uid="uid://bqef1d1vh5uyr" path="res://scripts/scenes/station.gd" id="1_x5133"]
 [ext_resource type="Texture2D" uid="uid://dgqrol1bvfcu2" path="res://assets/graphics/train_station_stage/background.png" id="2_75lwc"]
 [ext_resource type="Texture2D" uid="uid://cvv50n57hmrv8" path="res://assets/graphics/train_station_stage/whole_train.png" id="3_n1mxr"]
 [ext_resource type="PackedScene" uid="uid://dvosjy7qxgmsj" path="res://scenes/character/character.tscn" id="4_n1mxr"]
+[ext_resource type="PackedScene" uid="uid://6elww40bqr0p" path="res://scenes/vending_machine/vending_machine.tscn" id="5_my526"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_my526"]
+size = Vector2(46, 57)
 
 [node name="Station" type="Node2D"]
 script = ExtResource("1_x5133")
@@ -20,31 +24,36 @@ offset_left = 39.0
 offset_right = 982.0
 offset_bottom = 383.0
 
-[node name="Buttons" type="Node" parent="."]
-
-[node name="Map" type="Node" parent="Buttons"]
-
-[node name="Map" type="Button" parent="Buttons/Map"]
-offset_right = 135.0
-offset_bottom = 70.0
-text = "Map"
-
-[node name="Vending" type="Node" parent="Buttons"]
-
-[node name="Machine" type="Button" parent="Buttons/Vending"]
-offset_right = 8.0
-offset_bottom = 8.0
-
 [node name="Background" type="Sprite2D" parent="."]
-position = Vector2(601, 350)
-scale = Vector2(0.784259, 0.784259)
+position = Vector2(546, 369)
+scale = Vector2(0.804167, 0.804167)
 texture = ExtResource("2_75lwc")
 
 [node name="WholeTrain" type="Sprite2D" parent="."]
-position = Vector2(5.00001, 334)
-scale = Vector2(1.71875, 1.71875)
+z_index = 1
+position = Vector2(57, 370)
+scale = Vector2(1.46875, 1.46875)
 texture = ExtResource("3_n1mxr")
 
 [node name="Character" parent="." instance=ExtResource("4_n1mxr")]
+z_index = 1
 position = Vector2(170, 246)
 is_player = true
+
+[node name="VendingMachine" parent="." instance=ExtResource("5_my526")]
+position = Vector2(586, 116)
+scale = Vector2(2, 2)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="VendingMachine"]
+position = Vector2(-293, -58)
+scale = Vector2(0.5, 0.5)
+polygon = PackedVector2Array(-13, 666, -94, 731, 1330, 700, 1099, 659, 90, 645, 100, 440, 29, 405, 31, 316, 86, 282, 102.579, 145.152, 1069, 137, 1083, 648, 1233, 654, 1215, 18, -20, -5)
+
+[node name="Area2D" type="Area2D" parent="."]
+position = Vector2(84, 363)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(-12, 0)
+shape = SubResource("RectangleShape2D_my526")
+
+[connection signal="body_entered" from="Area2D" to="Character" method="_on_area_2d_body_entered"]

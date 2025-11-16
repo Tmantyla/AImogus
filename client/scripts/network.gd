@@ -24,8 +24,8 @@ func _on_disconnected():
 
 # RPC handler for events sent from server → client
 @rpc("authority")
-func event(name: String, payload: Dictionary):
-	print("CLIENT RECEIVED EVENT:", name, payload)
+func handle_message(type: String, payload: Dictionary):
+	print("CLIENT RECEIVED EVENT:", type, payload)
 
 # Send event to server
 func send_event(name: String, payload: Dictionary = {}):

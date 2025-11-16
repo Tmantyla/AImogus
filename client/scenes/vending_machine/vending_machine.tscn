@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://6elww40bqr0p"]
+
+[ext_resource type="Script" uid="uid://dcjftpqixogaq" path="res://scenes/vending_machine/vending_machine.gd" id="1_tf6tk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xs8xd"]
+size = Vector2(62, 51)
+
+[node name="VendingMachine" type="CharacterBody2D"]
+script = ExtResource("1_tf6tk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-3, 14.5)
+shape = SubResource("RectangleShape2D_xs8xd")

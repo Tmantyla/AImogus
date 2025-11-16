@@ -10,8 +10,9 @@ func _ready():
 	print("server running on port 9000")
 
 @rpc("any_peer")
-func event(name: String, payload: Dictionary):
-	print("received:", name, payload)
+func handle_message(type: String, payload: Dictionary):
+	if type == "went_to_vending_machine":
+		pass
 	
 func _on_peer_connected(peer_id):
 	print("Client connected:", peer_id)
