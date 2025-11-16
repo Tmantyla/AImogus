@@ -2,6 +2,10 @@ extends Node2D
 
 class_name Server
 
+var GAME_ON = false
+var clientPlayer: Dictionary[int, int] = {}
+
+
 const MAP_VERTICES = [0, 1, 2, 3, 4]
 const MAP_EDGES = [[0, 1], [1, 2], [2, 3], [3, 0], [0, 2], [3, 4]]
 const TEMP_VERTEX_POSITIONS: Array[Vector2] = [
@@ -23,10 +27,36 @@ var howManyReady = 0
 var voteDictionary: Dictionary[int, int] = {}
 var speaksList: Array[String] = []
 
+
 func _ready():
 	
-	add_child(ai)
+	var peer = ENetMultiplayerPeer.new()
+	peer.create_server(9000)
+	multiplayer.multiplayer_peer = peer
+	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	print("server running on port 9000")
+	
 
+func start_game():
+	
+	var humans = clientPlayer.size()
+	var bots = 5
+	var total = humans + bots
+	var IDs: Array[int] = []
+	for i in range(total):
+		IDs.append(i)
+	IDs.shuffle()
+	var botIDs: Array[int] = []
+	for i in range(total):
+		if i < humans:
+			clientPlayer[clientPlayer.keys()[i]] = IDs[i]
+		else:
+			botIDs.append(IDs[i])
+	
+	
+	GAME_ON = true
+	add_child(ai)
 	for vertex in MAP_VERTICES:
 		var station = Station.new(vertex, self)
 		stations.append(station)
@@ -42,15 +72,14 @@ func _ready():
 		line.width = 2
 		line.default_color = Color(0, 0, 0)
 
-	var debugPlayer = Player.new(0, self)
-	add_child(debugPlayer)
-	vessels[0] = debugPlayer
-	vessels[1] = Robot.new(1, self)
-	for i in range(3, 10):
-		vessels[i] = Robot.new(i, self)
-		add_child(vessels[i])
-
-	add_child(vessels[1])
+	for client in clientPlayer.keys():
+		var player = Player.new(clientPlayer[client], self)
+		add_child(player)
+		vessels[clientPlayer[client]] = player
+		
+	for bot in botIDs:
+		vessels[bot] = Robot.new(bot, self)
+		add_child(vessels[bot])
 
 func startMeetingPhase2() -> void:
 	meetingPhase = 2
@@ -164,21 +193,49 @@ func startMeeting():
 	
 
 func _process(delta):
-	if !inMeeting:
-		timeToNextMeeting -= delta
-		if timeToNextMeeting < 0:
-			startMeeting()
-			resetTimeToNextMeeting()
+	if GAME_ON:
+		if !inMeeting:
+			timeToNextMeeting -= delta
+			if timeToNextMeeting < 0:
+				startMeeting()
+				resetTimeToNextMeeting()
+		else:
+			pass
 	else:
-		pass
+		if Input.is_action_just_pressed("ui_accept"):
+			start_game()
 	queue_redraw()
 	
 func _draw() -> void:
-	if inMeeting:
-		draw_string(ThemeDB.fallback_font, Vector2(600, 40), "Meeting Ongoing!", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(0, 1, 1))
-	for i in range(speaksList.size()):
-		draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
-	var fs = finalSayDictionary.values()
-	for i in range(fs.size()):
-		draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
-	draw_string(ThemeDB.fallback_font, Vector2(30, 30), "Time to next meeting: " + str(int(timeToNextMeeting)), HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+	if GAME_ON:
+		if inMeeting:
+			draw_string(ThemeDB.fallback_font, Vector2(600, 40), "Meeting Ongoing!", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(0, 1, 1))
+		for i in range(speaksList.size()):
+			draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+		var fs = finalSayDictionary.values()
+		for i in range(fs.size()):
+			draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+		draw_string(ThemeDB.fallback_font, Vector2(30, 30), "Time to next meeting: " + str(int(timeToNextMeeting)), HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+	else:
+		draw_string(ThemeDB.fallback_font, Vector2(100, 100), "Press enter to start game, connected clients:", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+		var keys = clientPlayer.keys()
+		for i in range(keys.size()):
+			draw_string(ThemeDB.fallback_font, Vector2(100, 120 + 20*i), "Client: " + str(keys[i]), HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+
+
+@rpc("any_peer")
+func handle_message(type: String, payload: Dictionary):
+	if type == "went_to_vending_machine":
+		pass
+	
+func _on_peer_connected(peer_id):
+	print("Client connected:", peer_id)
+	if !clientPlayer.keys().has(peer_id):
+		clientPlayer[peer_id] = -1
+
+func _on_peer_disconnected(peer_id):
+	print("Client disconnected:", peer_id)
+	if clientPlayer.keys().has(peer_id):
+		if vessels.has(clientPlayer[peer_id]):
+			vessels[clientPlayer[peer_id]].lobotomy("Client disconnected")
+		clientPlayer.erase(peer_id)
