@@ -1,18 +1,6 @@
 extends Vessel
 class_name Player
 
-var TEMP_dialogueAnswer = null
-func TEMP_askDialogue(question: String):
-	var edit := LineEdit.new()
-	edit.placeholder_text = question
-	edit.custom_minimum_size = Vector2(400, 30)
-	edit.update_minimum_size()
-	add_child(edit)
-	edit.connect("text_submitted", func(text):
-		self.TEMP_dialogueAnswer = text
-		edit.queue_free()
-	)
-
 func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> void:
 	print("PLAYER " + str(id) + " OBSERVED " + str(who) + " " + ServerUtilities.actionString(what, subject) + "!")
 	### Send observation to client
@@ -21,108 +9,91 @@ func meetingForward(who: int, text: String) -> void:
 	pass ### TODO: Send this to client
 
 func requestVote() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("Who will you vote for?")
+	pass
 
 func requestMeetingAnswerPhase1() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("What will you say in the meeting?")
+	pass
 
 func requestMeetingAnswerPhase2() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("What is your final say before voting?")
+	pass
 
 func requestActionAtVendingMachine() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("x to refill or y to repair")
+	pass
 
 func requestQuestionToFriend() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("What do you wish to ask?")
+	pass
 
 func requestNextStation() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("Which station? (index from 0-" + str(currentPosition.connectedStations.size()-1) + ")")
+	pass
 
 func requestContinue() -> void:
-	TEMP_dialogueAnswer = null
-	TEMP_askDialogue("Continue? (yes/no)")
+	pass
 
 func _process(delta: float) -> void:
 	interrupted = false
-	if id == 0: # temp for debug only control player with id 0
-		match state:
-			State.VOID:
-				pass
-			State.AT_STATION:
-				if Input.is_action_just_pressed("ui_up"):
-					goToChangeStation()
-				if Input.is_action_just_pressed("ui_down"):
-					pickupArtefact()
-				if Input.is_action_just_pressed("ui_right"):
-					var firstNotMe = null
-					for vesselId in currentPosition.vesselsAtStation:
-						if vesselId != id:
-							firstNotMe = vesselId
-							break
-					if firstNotMe != null:
-						print("Vessel " + str(id) + " initiating conversation with " + str(firstNotMe))
-						initiateConversation(firstNotMe)
-					else:
-						print("Nobody else at station!")
-				if Input.is_action_just_pressed("ui_left"):
-					goToVendingMachine()
-			State.CHANGING_STATION:
-				if TEMP_dialogueAnswer != null:
-					var moveTo = int(TEMP_dialogueAnswer)
-					if moveTo < 0 or moveTo > currentPosition.connectedStations.size()-1:
-						print("This station doesnt exist")
-						leaveChangeStation()
-					else: 
-						print("player moving to " + TEMP_dialogueAnswer)
-						changeStation(int(TEMP_dialogueAnswer))
-					TEMP_dialogueAnswer = null
-			State.CHATTING_SENDER:
-				if TEMP_dialogueAnswer != null:
-					sendQuestion(TEMP_dialogueAnswer)
-					TEMP_dialogueAnswer = null
-			State.CHATTING_RECIEVER:
-				pass # Buddy should call your "recieve question" function
-			State.CHATTING_CONTINUE:
-				if TEMP_dialogueAnswer != null:
-					if TEMP_dialogueAnswer == "yes":
-						continueChat()
-					else:
-						abortChat()
-					TEMP_dialogueAnswer = null
-			State.AT_VENDING_MACHINE:
-				if TEMP_dialogueAnswer != null:
-					if TEMP_dialogueAnswer == "x":
-						refillVendingMachine()
-					elif TEMP_dialogueAnswer == "y":
-						repairVendingMachine()
-					else:
-						leaveVendingMachine()
-					TEMP_dialogueAnswer = null
-			State.MEETING_WAITING:
-				pass
-			State.MEETING_TURN:
-				if TEMP_dialogueAnswer != null:
-					sayInMeeting(TEMP_dialogueAnswer)
-					TEMP_dialogueAnswer = null
-			State.MEETING_FINALSAY:
-				if TEMP_dialogueAnswer != null:
-					finalSayInMeeting(TEMP_dialogueAnswer)
-					TEMP_dialogueAnswer = null
-			State.MEETING_VOTE:
-				if TEMP_dialogueAnswer != null:
-					vote(int(TEMP_dialogueAnswer))
-					TEMP_dialogueAnswer = null
-			_:
-				print("Bad state, changing to VOID")
-				state = State.VOID
-	else:
-		pass
+	match state:
+		State.VOID:
+			pass
+		State.AT_STATION:
+			if recieved_commands.has("go_to_change_location"):
+				goToChangeStation()
+			elif recieved_commands.has("pick_up_artefact"):
+				pickupArtefact()
+			elif recieved_commands.has("try_converse_with_vessel"):
+				var vesselId = int(recieved_commands["try_converse_with_vessel"])
+				if vesselId != null and server.vessels[vesselId].chattable():
+					print("Vessel " + str(id) + " initiating conversation with " + str(vesselId))
+					initiateConversation(vesselId)
+				else:
+					print("Unable to chat with this person!")
+			elif recieved_commands.has("go_to_vending_machine"):
+				goToVendingMachine()
+		State.CHANGING_STATION:
+			if recieved_commands.has("change_location"):
+				var moveTo = recieved_commands["change_location"]
+				var found = false
+				for st in currentPosition.connectedStations:
+					if st.id == moveTo:
+						print("player moving to " + moveTo)
+						changeStation(moveTo)
+						found = true
+				if !found:
+					print("Can't go to this station!")
+					leaveChangeStation()
+		State.CHATTING_SENDER:
+			if recieved_commands.has("send_message"):
+				sendQuestion(recieved_commands["send_message"])
+		State.CHATTING_RECIEVER:
+			pass # Buddy should call your "recieve question" function
+		State.CHATTING_CONTINUE:
+			if recieved_commands.has("continue_conversation"):
+				if recieved_commands["continue_conversation"] == "true":	
+					continueChat()
+				else:
+					abortChat()
+		State.AT_VENDING_MACHINE:
+			if recieved_commands.has("refill_vending_machine"):
+				refillVendingMachine()
+			elif recieved_commands.has("repair_vending_machine"):
+				repairVendingMachine()
+			elif recieved_commands.has("leave_vending_machine"):
+				refillVendingMachine()
+		State.MEETING_WAITING:
+			pass
+		State.MEETING_TURN:
+			if recieved_commands.has("speak_at_meeting"):
+				sayInMeeting(recieved_commands["speak_at_meeting"])
+		State.MEETING_FINALSAY:
+			if recieved_commands.has("speak_at_meeting"):
+				finalSayInMeeting(recieved_commands["speak_at_meeting"])
+		State.MEETING_VOTE:
+			if recieved_commands.has("vote"):
+				vote(int(recieved_commands["vote"]))
+		_:
+			print("Bad state, changing to VOID")
+			state = State.VOID
+	
+	recieved_commands = {}
 	queue_redraw()
 	
 func _draw() -> void:

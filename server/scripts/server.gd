@@ -18,7 +18,7 @@ var stations: Array[Station] = []
 var ai = AiApi.new()
 
 var inMeeting = false
-var timeToNextMeeting: float = 5.0
+var timeToNextMeeting: float = 30
 var meetingSpeakerIndex = null
 var meetingSpeakerOrder: Array[int] = []
 var meetingPhase = 0
@@ -77,7 +77,7 @@ func start_game():
 		add_child(player)
 		vessels[clientPlayer[client]] = player
 		
-		send_to_client(client, "game_started", {})
+		send_to_client(client, "game_start", {})
 		
 	for bot in botIDs:
 		vessels[bot] = Robot.new(bot, self)
@@ -162,6 +162,8 @@ func recieveVote(id: int, vote: int):
 
 func recieveTalkFromSpeaker(text: String) -> void:
 	speaksList.append(text)
+	for client in clientPlayer.keys():
+		send_to_client(client, "meeting_update", { "speaker": currentSpeaker().id, "message": text })
 	for id in vessels:
 		if id != currentSpeaker().id:
 			vessels[id].meetingForward(currentSpeaker().id, text)
@@ -192,6 +194,9 @@ func startMeeting():
 	meetingSpeakerOrder.shuffle()
 	meetingSpeakerIndex = 0
 	
+	for client in clientPlayer.keys():
+		send_to_client(client, "meeting_start", { "order": meetingSpeakerOrder })
+		
 	currentSpeaker().recieveMeetingTurn()
 	
 
@@ -229,63 +234,90 @@ func _draw() -> void:
 @rpc("any_peer")
 func handle_message(type: String, payload: Dictionary):
 	var sender_id := multiplayer.get_remote_sender_id()
+	var player = vessels[clientPlayer[sender_id]]
 	match type:
 		"go_to_change_location": # Tää on niiku kun sä meet siihen kartta-menuun
 			# Ei payloadia
-			pass
+			player.recieved_commands[type] = ""
 		"leave_change_location": # Tää on niikukun sä lähet siitä kartta menusta ja et vaihdakkaan paikkaa
 			# Ei payloadia
-			pass
+			player.recieved_commands[type] = ""
 		"change_location":
 			# payload = {"location": int}
-			pass
+			player.recieved_commands[type] = payload["location"]
 		"pick_up_artefact":
 			# Ei payloadia
-			pass
+			player.recieved_commands[type] = ""
 		"try_converse_with_vessel":
 			# payload = {"vesselId": int}
 			# Sit kun lähetän sulle niitä että jengi joinaa huoneeseen nii 
 			# lähetän samalla niiden "id" niin että sä voit käyttää sitä 
 			# ja lähettää sen takas
-			pass
+			player.recieved_commands[type] = str(payload["vesselId"])
 		"go_to_vending_machine":
 			# Ei payload
-			pass
-		"send_message": # sit kun oot eka joka laittaa viestiä keskustelussa nii tää
+			player.recieved_commands[type] = ""
+		"send_message": # sulta pyydetään tätä aina välillä tolla "prompt_conversation"
 			# payload = { "message": String }
-			pass
-		"answer_message": # sit tää kun sä vastaat/et vastaa johonkin
-			# payload = { "quit": bool, "message": String }
-			# tää on niiku send_message mut täs on myös vaihtoehtona että sä et vastaa
-			# jos "quit" on true nii sit "message" ignoretaan
-			pass
+			player.recieved_commands[type] = payload["message"]
+		"continue_conversation": 
+			# payload = { "continue": bool }
+			if payload["continue"]:
+				player.recieved_commands[type] = true
+			else:
+				player.recieved_commands[type] = false
 		"refill_vending_machine":
 			# Ei payload
-			pass
+			player.recieved_commands[type] = ""
 		"repair_vending_machine":
 			# Ei payload
-			pass
+			player.recieved_commands[type] = ""
 		"leave_vending_machine":
 			# Ei payload
-			pass
+			player.recieved_commands[type] = ""
 		"speak_at_meeting": 
 			# Sulta kysytään tätä meetingissä 2 kertaa kun mä lähetän 
-			# sulle signaalin "get_meeting_speech" ja "get_meeting_finalsay",
+			# sulle signaalin "prompt_meeting_speech" ja "prompt_meeting_finalsay",
 			# nii lähetä sit tää molemmilla kerroilla
 			# payload = { "message": String }
-			pass
+			player.recieved_commands[type] = payload["message"]
 		"vote":
 			# payload = { "vote": int }
 			# Tässä kans toi "vote" on se player id. Kun voting alkaa nii mä 
 			# lähetän sulle ne kaikki IDt sitten nii voit käyttää niitä
-			pass
+			player.recieved_commands[type] = str(payload["vote"])
 		_:
 			# Siinä pitäis kai olla kaikki
 			pass	
 	
 func send_to_client(peer_id: int, type: String, payload: Dictionary = {}):
 	rpc_id(peer_id, "handle_message", type, payload)
-	
+	# Tää voi olla:
+	# - "meeting_start", aika itsestäänselvä, payload on: { "order": [int, int, int, int ... int] } 
+	# 	eli käytännössä vaan lista playerId:tä, joka kertoo sen et missä järjestyksessä tää meeting on
+	# - "meeting_update", tää tulee aina ku meetingissä vaihtuu vuoro, payload: { "speaker": int, "message": String }
+	# - "prompt_meeeting_speech", käytännös sanoo että "Nyt on sun vuoro meeting phase 1"
+	# - "prompt_meeting_finalsay", sama kun ylempi mutta "Nyt sua odotetaan laittaa final say in phase 2"
+	# - "get_vote", käytännössä "nyt on äänestysvaihe"
+	# - "meeting_end", tää meinaa vaan et "meetti loppu, mee takas sun lokaatioon"
+	# 	ja ton payload on vaa { "location": int } eli stationin id
+	# - "display_huutistelu", tää on sitä varten että siihen näytölle vois displayaa jonkun huutiksen
+	# 	vaikka että "You can't initiate a conversation with this person because they are too busy"
+	# 	ja ton payload on { "message": String }
+	# - "conversation_start", tää meinaa sitä että nyt on alkanut keskustelutilanne.
+	# 	Tää ei itsessään vielä tarkota että sun pitää ottaa inputtia, tää on vaan se
+	# 	et joku staredown alkaa
+	# - "prompt_conversation", Tää sit taas meinaa sitä että "promptaa inputtia ja lähetä se conversationissa"
+	# - "death", Tää tulee jos sä kuolet esim sut vote outataan
+	# - "someone_entered", tää tulee ku joku entteraa, payload: { "player": int }
+	# - "someone_left", tää tulee ku joku lähtee, payload: { "player": int }
+	# - "someone_artefact", tää tulee ku joku nostaa artefactin, payload: { "player": int }
+	# - "someone_vending", tää tulee ku joku menee vending machinelle, payload: { "player": int }
+	# - "someone_unvending", tää tulee ku joku lähtee vending machineltä, payload: { "player": int }
+	# - "someone_lobotomized", tää tulee ku joku räjähtää, payload: { "player": int }
+	# - "observe", Tää on muodossa payload = { "observation": String } ja tää on vaa remmonen roblox chat
+	# 	observaatio joka tulee vaik sinne chättii
+	# - "game_start", Tää tulee kun peli alkaa
 	print("SERVER SENT TO", peer_id, type, payload)
 
 func _on_peer_connected(peer_id):
