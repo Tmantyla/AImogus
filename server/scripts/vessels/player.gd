@@ -12,23 +12,20 @@ func requestVote() -> void:
 	pass
 
 func requestMeetingAnswerPhase1() -> void:
-	pass
+	if id == 42:
+		server.serverPlayerController._start_answer_mode("Meeting Answer (Phase 1):", "meeting_answer_phase1")
 
 func requestMeetingAnswerPhase2() -> void:
-	pass
-
-func requestActionAtVendingMachine() -> void:
-	pass
+	if id == 42:
+		server.serverPlayerController._start_answer_mode("Meeting Answer (Phase 2):", "meeting_answer_phase2")
 
 func requestQuestionToFriend() -> void:
-	pass
-
-func requestNextStation() -> void:
-	pass
+	if id == 42:
+		server.serverPlayerController._start_answer_mode("Ask a question to your friend:", "question_to_friend")
 
 func requestContinue() -> void:
 	pass
-
+	
 func _process(delta: float) -> void:
 	interrupted = false
 	match state:

@@ -14,6 +14,33 @@ enum VS {
 	MEETING_VOTE
 }
 
+func statename(vs: VS) -> String:
+	match vs:
+		VS.VOID:
+			return "void"
+		VS.CHANGING_STATION:
+			return "changing station"
+		VS.AT_STATION:
+			return "at station"
+		VS.CHATTING_SENDER:
+			return "chatting (sender)"
+		VS.CHATTING_RECIEVER:
+			return "chatting (reciever)"
+		VS.CHATTING_CONTINUE:
+			return "chatting (continue?)"
+		VS.AT_VENDING_MACHINE:
+			return "at vending machine"
+		VS.MEETING_WAITING:
+			return "meeting (waiting)"
+		VS.MEETING_TURN:
+			return "meeting (your turn)"
+		VS.MEETING_FINALSAY:
+			return "meeting (final say)"
+		VS.MEETING_VOTE:
+			return "meeting (vote)"
+		_:
+			return "nothing"
+
 enum ActionSignal {
 	LEAVE,
 	ARRIVE,

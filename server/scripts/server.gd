@@ -18,7 +18,7 @@ var stations: Array[Station] = []
 var ai = AiApi.new()
 
 var inMeeting = false
-var timeToNextMeeting: float = 30
+var timeToNextMeeting: float = 200
 var meetingSpeakerIndex = null
 var meetingSpeakerOrder: Array[int] = []
 var meetingPhase = 0
@@ -27,6 +27,7 @@ var howManyReady = 0
 var voteDictionary: Dictionary[int, int] = {}
 var speaksList: Array[String] = []
 
+var serverPlayerController: ServerPlayerController
 
 func _ready():
 	
@@ -83,7 +84,13 @@ func start_game():
 		vessels[bot] = Robot.new(bot, self)
 		add_child(vessels[bot])
 		
-
+	var debugplayer = Player.new(42, self)
+	add_child(debugplayer)
+	vessels[42] = debugplayer
+	serverPlayerController = ServerPlayerController.new(42, self)
+	add_child(serverPlayerController)
+	serverPlayerController.position = Vector2(500, 400)
+	
 func startMeetingPhase2() -> void:
 	meetingPhase = 2
 	meetingSpeakerIndex = null
@@ -103,7 +110,7 @@ func recieveFinalSay(id: int, text: String) -> void:
 		startVoting()
 
 func resetTimeToNextMeeting() -> void:
-	timeToNextMeeting = 100.0
+	timeToNextMeeting = 200.0
 
 func broadcastLobotomy(id: int, reason: String) -> void:
 	for vs in vessels:
