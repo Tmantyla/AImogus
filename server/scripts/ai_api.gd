@@ -1,8 +1,8 @@
 extends Node
 class_name AiApi
 
-# NOTE: PLEASE DO NOT STEAL THIS API KEY I BEG YOU!!!!111
-var GOOGLE_API_KEY = "AQ.Ab8RN6Lwz2hL-JYecVIICyYKFnmy0CArn8vVdvR3Lv4YpIgMqQ"
+# REPLACE THIS WITH YOUR OWN KEY
+var GOOGLE_API_KEY = "API_KEY_HERE"
 var GEMINI_CHAT_URL = (
 	"https://aiplatform.googleapis.com/v1/publishers/google/models/gemini-2.5-flash-lite:generateContent?key=%s"
 	% GOOGLE_API_KEY
