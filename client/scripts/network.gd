@@ -26,11 +26,15 @@ func _on_disconnected():
 @rpc("authority")
 func handle_message(type: String, payload: Dictionary):
 	print("CLIENT RECEIVED EVENT:", type, payload)
+	if type == "game_started":
+		print("GAME STARTED")
+		send_event("affirmative")
+		
 
 # Send event to server
 func send_event(name: String, payload: Dictionary = {}):
 	if multiplayer.is_server() or multiplayer.get_unique_id() != 0:
-		rpc_id(1, "event", name, payload)
+		rpc_id(1, "handle_message", name, payload)
 		print("CLIENT SENT:", name, payload)
 	else:
 		print("CLIENT: not connected, can't send")

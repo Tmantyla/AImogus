@@ -19,5 +19,5 @@ config/icon="res://icon.svg"
 
 ButtonHandler="*res://scripts/button_handler.gd"
 Chatbox="*res://scenes/ui/chatbox.tscn"
-ServerHost="*res://scripts/network.gd"
+Server="*res://scripts/network.gd"
 PlayerState="*res://scenes/character/state.gd"

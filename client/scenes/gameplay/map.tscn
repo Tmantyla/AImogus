@@ -1,6 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cyqd17yqbl36l"]
 
 [ext_resource type="Script" uid="uid://bbjxdtc3imxbe" path="res://scripts/scenes/map.gd" id="1_vado4"]
+
 [ext_resource type="Texture2D" uid="uid://rt2bxngegpe3" path="res://assets/graphicsupdate/map.png" id="2_5jlrt"]
 
 [sub_resource type="GDScript" id="GDScript_5jlrt"]
