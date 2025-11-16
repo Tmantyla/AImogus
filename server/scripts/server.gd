@@ -71,39 +71,56 @@ func recieveFinalSay(id: int, text: String) -> void:
 		startVoting()
 
 func resetTimeToNextMeeting() -> void:
-	timeToNextMeeting = 20.0
+	timeToNextMeeting = 100.0
 
 func broadcastLobotomy(id: int, reason: String) -> void:
 	for vs in vessels:
 		vessels[vs].observe(id, ServerUtilities.ActionSignal.LOBOTOMY, reason)
 
 func voteOut(id: int) -> void:
-	finalSayDictionary = {}
-	voteDictionary = {}
-	resetTimeToNextMeeting()
-	vessels[id].death()
 	for vs in vessels:
 		vessels[vs].observe(id, ServerUtilities.ActionSignal.VOTED_OUT, "")
-		vessels[vs].releaseFromVoting()
+	vessels[id].death()
 
 func concludeVoting() -> void:
 	howManyReady = 0
 	meetingPhase = 0
 	meetingSpeakerIndex = 0
 	speaksList = []
+	
+	var vote_counts := {}
+
+	# Count votes each player received
+	for voter_id in voteDictionary.keys():
+		var voted_player_id = voteDictionary[voter_id]
+		vote_counts[voted_player_id] = vote_counts.get(voted_player_id, 0) + 1
+
+	# Determine the highest vote count
+	var max_votes := 0
+	for count in vote_counts.values():
+		if count > max_votes:
+			max_votes = count
+
+	# Find all players with this max count
+	var winners := []
+	for player_id in vote_counts.keys():
+		if vote_counts[player_id] == max_votes:
+			winners.append(player_id)
+
+	# Output
+	if winners.size() == 1:
+		print("Voting out: ", winners[0])
+		voteOut(winners[0])
+	else:
+		print("Tie, nobody was voted out")
+	
+	finalSayDictionary = {}
+	voteDictionary = {}
+	resetTimeToNextMeeting()
+	for vs in vessels:
+		vessels[vs].releaseFromVoting()
 	inMeeting = false
 	
-	var votes = voteDictionary.values()
-	var voted: Dictionary = {}
-	for vote in votes:
-		var c = votes.count(vote)
-		if voted[c] == null:
-			voted[c] = []
-		voted[c].append(vote)
-	var mostVoted: Array[int] = voted[voted.keys().max()]
-	
-	if mostVoted.size() == 1 and vessels.keys().has(mostVoted[0]):
-		voteOut(mostVoted[0])
 
 func recieveVote(id: int, vote: int):
 	howManyReady += 1
@@ -151,15 +168,17 @@ func _process(delta):
 		timeToNextMeeting -= delta
 		if timeToNextMeeting < 0:
 			startMeeting()
+			resetTimeToNextMeeting()
 	else:
 		pass
 	queue_redraw()
 	
 func _draw() -> void:
 	if inMeeting:
-		for i in range(speaksList.size()):
-			draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
-		var fs = finalSayDictionary.values()
-		for i in range(fs.size()):
-			draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+		draw_string(ThemeDB.fallback_font, Vector2(600, 40), "Meeting Ongoing!", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(0, 1, 1))
+	for i in range(speaksList.size()):
+		draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+	var fs = finalSayDictionary.values()
+	for i in range(fs.size()):
+		draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
 	draw_string(ThemeDB.fallback_font, Vector2(30, 30), "Time to next meeting: " + str(int(timeToNextMeeting)), HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))

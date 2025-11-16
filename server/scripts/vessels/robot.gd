@@ -214,6 +214,7 @@ func parseAction(string):
 		print("Robot %s was lobotomized: %s" % [id, json])
 		lobotomy("JSON field had the wrong value.")
 		return
+	print(str(id) + ": " + str(json))
 	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
@@ -223,6 +224,7 @@ func parseAction(string):
 	else:
 		match act.type:
 			"movement":
+				print(str(id) + ": move to " + str(act.destination))
 				changeStation(act.destination)
 			"machine":
 				#print("Robot %s went to the vending machine" % id)
@@ -234,10 +236,13 @@ func parseAction(string):
 					match task:
 						# TODO do the stuff @Zen
 						"withdraw":
+							print(str(id) + ": withdraw")
 							state = State.AT_STATION
 						"repair":
+							print(str(id) + ": repair")
 							repairVendingMachine()
 						"refill":
+							print(str(id) + ": refill")
 							refillVendingMachine()
 				else:
 					# Just take from the machine (default actions)
@@ -270,51 +275,68 @@ func updateState():
 
 var idle = true
 
+var TEMP_saidfinal = false
+var TEMP_voted = false
+
 
 func _process(delta: float) -> void:
 	actTimer += delta
 
 	match state:
 		State.VOID:
-			print("Robot " + str(id) + " wants to act but is VOID")
+			print(str(id) + ": wants to act but is VOID")
 		State.AT_STATION:
 			if actTimer > randi() % 1000 and idle:
 				actTimer = 0
 
 				updateState()
 
-				print("Robot %s acting now!" % id)
+				print(str(id) + ": acting now!")
 				idle = false
+				interruptible = true
 				parseAction(await action(playerState))
+				interruptible = false
 				idle = true
+				actTimer = 0
+
 		State.CHATTING_CONTINUE:
 			if idle:
+				interruptible = true
 				idle = false
 				if conversationBuddy == null or recievedQuestion == null:
 					abortChat()
 				else:
 					var msg = {"id": conversationBuddy, "message": recievedQuestion}
 					var response = await action(msg)
-					var json = parseJson(response)
-					if !json.has("message") or json.message == "":
-						abortChat()
-					else:
-						print(
-							(
-								"Robot %s answered to player %s: %s"
-								% [id, conversationBuddy, json.message]
+					interruptible = false
+					if !interrupted:
+						var json = parseJson(response)
+						if !json.has("message") or json.message == "":
+							abortChat()
+						else:
+							print(
+								(
+									"Robot %s answered to player %s: %s"
+									% [id, conversationBuddy, json.message]
+								)
 							)
-						)
-						continueChat()
-						sendQuestion(json.message)
+							continueChat()
+							sendQuestion(json.message)
+					else:
+						observations.append("Your last action was interrupted!")
+						interrupted = false
 				idle = true
 		State.MEETING_WAITING:
 			pass
 		State.MEETING_TURN:
 			sayInMeeting("Phase 1")
 		State.MEETING_FINALSAY:
-			finalSayInMeeting("Phase 2")
+			if !TEMP_saidfinal:
+				finalSayInMeeting("Phase 2")
+				TEMP_saidfinal = true
 		State.MEETING_VOTE:
-			vote(1)
+			if !TEMP_voted:
+				vote(1)
+				TEMP_voted = true
 		_:
 			pass

@@ -12,6 +12,7 @@ var conversationBuddy = null
 
 var artefacts: int = 0
 var interrupted: bool = false
+var interruptible: bool = false
 
 func _init(_id: int, _server: Server) -> void:	
 	id = _id
@@ -46,7 +47,6 @@ func recieveMeetingTurn() -> void:
 	state = State.MEETING_TURN
 	
 func meetingPhase2() -> void:
-	print("Vessel " + str(id) + " to phase 2")
 	requestMeetingAnswerPhase2()
 	state = State.MEETING_FINALSAY
 
@@ -79,12 +79,16 @@ func lobotomy(reason: String) -> void:
 	death()
 
 func releaseFromVoting() -> void:
+	print("Release " + str(id) + " from voting")
 	state = State.AT_STATION
 	recievedQuestion = null
 	conversationBuddy = null
 	
+func interrupt() -> void:
+	interrupted = interruptible
 
 func goToMeeting() -> void:
+	interrupt()
 	abortChat()
 	state = State.MEETING_WAITING
 
@@ -173,7 +177,7 @@ func pickupArtefact() -> void:
 # It seems someone wants to talk to me
 func recieveConversationFrom(vesselId: int) -> void:
 	state = State.CHATTING_RECIEVER
-	interrupted = true
+	interrupt()
 	recievedQuestion = null
 	conversationBuddy = vesselId
 	
@@ -189,6 +193,8 @@ func sendQuestion(text: String) -> void:
 		print("Vessel " + str(id) + " to Vessel " + str(conversationBuddy) + ": " + text)
 		var buddy = server.vessels[conversationBuddy]
 		buddy.recieveQuestion(text)
+	else: 
+		print("Null conversation buddy")
 	state = State.CHATTING_RECIEVER
 
 # I would like to act at the vending machine
