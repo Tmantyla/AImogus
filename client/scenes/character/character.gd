@@ -7,7 +7,6 @@ var character_id := -1
 var target_pos: Vector2 = Vector2.ZERO
 var npc_idle_time := 0.0
 
-# NPC settings
 var wander_radius := 200.0
 var npc_wait_time := 3.5
 var npc_timer := 0.0
@@ -38,10 +37,6 @@ func _physics_process(delta):
 	else:
 		move_npc(delta)
 
-
-# ---------------------------------------------------------
-# PLAYER MOVEMENT
-# ---------------------------------------------------------
 func move_player(delta):
 	var dir = target_pos - global_position
 	var dist = dir.length()
@@ -84,8 +79,6 @@ func move_npc(delta):
 		var collision = get_slide_collision(0)
 		velocity = velocity.bounce(collision.get_normal())
 		target_pos = global_position + velocity.normalized() * 50.0
-
-
 
 func npc_pick_new_target():
 	var random_offset = Vector2(
