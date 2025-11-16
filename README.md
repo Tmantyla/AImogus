@@ -1,5 +1,5 @@
 # AImogus
-
+#NOTE: You should use your own API key to enable server functionality.
 ## Slogan
 An experimental psychological game exploring the boundaries of human-AI behavior through a novel reverse Turing test.
 
