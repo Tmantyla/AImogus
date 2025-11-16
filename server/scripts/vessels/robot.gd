@@ -220,7 +220,7 @@ func parseAction(string):
 			"movement":
 				changeStation(act.destination)
 			"machine":
-				print("Robot %s went to the vending machine" % id)
+				#print("Robot %s went to the vending machine" % id)
 				var idx = playerState["tasks"].find(
 					func(task): return task["location"] == playerState.location
 				)
@@ -247,7 +247,7 @@ func parseAction(string):
 					sendQuestion(json.message)
 			_:
 				print("Robot %s was lobotomized" % id)
-				# TODO kill robot
+				death()
 
 
 func updateState():
@@ -303,5 +303,13 @@ func _process(delta: float) -> void:
 						continueChat()
 						sendQuestion(json.message)
 				idle = true
+		State.MEETING_WAITING:
+			pass
+		State.MEETING_TURN:
+			sayInMeeting("Phase 1")
+		State.MEETING_FINALSAY:
+			finalSayInMeeting("Phase 2")
+		State.MEETING_VOTE:
+			vote(1)
 		_:
 			pass

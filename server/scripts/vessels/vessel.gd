@@ -20,6 +20,15 @@ func _init(_id: int, _server: Server) -> void:
 	currentPosition = server.stations[0]
 	currentPosition.connectVessel(id)
 
+func requestMeetingAnswerPhase1() -> void:
+	pass # OVERRIDE THIS
+	
+func requestMeetingAnswerPhase2() -> void:
+	pass # OVERRIDE THIS
+
+func requestVote() -> void:
+	pass # OVERRIDE THIS
+	
 func requestNextStation() -> void: 
 	pass # OVERRIDE THIS
 
@@ -31,6 +40,53 @@ func requestContinue() -> void:
 
 func requestActionAtVendingMachine() -> void:
 	pass # OVERRIDE THIS
+
+func recieveMeetingTurn() -> void:
+	requestMeetingAnswerPhase1()
+	state = State.MEETING_TURN
+	
+func meetingPhase2() -> void:
+	print("Vessel " + str(id) + " to phase 2")
+	requestMeetingAnswerPhase2()
+	state = State.MEETING_FINALSAY
+
+func meetingForward(who: int, text: String) -> void:
+	pass # OVERRIDE THIS
+
+func startVoting() -> void:
+	state = State.MEETING_VOTE
+	requestVote()
+
+func finalSayInMeeting(text: String) -> void:
+	if server.inMeeting and server.meetingPhase == 2:
+		server.recieveFinalSay(id, text)
+
+func sayInMeeting(text: String) -> void:
+	if server.inMeeting and server.meetingPhase == 1:
+		state = State.MEETING_WAITING
+		server.recieveTalkFromSpeaker(text)
+
+func vote(vote: int) -> void:
+	server.recieveVote(id, vote)
+
+func death() -> void:
+	currentPosition.disconnectVessel(id)
+	server.vessels.erase(id)
+	queue_free()
+	
+func lobotomy(reason: String) -> void:
+	server.broadcastLobotomy(id, reason)
+	death()
+
+func releaseFromVoting() -> void:
+	state = State.AT_STATION
+	recievedQuestion = null
+	conversationBuddy = null
+	
+
+func goToMeeting() -> void:
+	abortChat()
+	state = State.MEETING_WAITING
 
 # I wish to change station
 func goToChangeStation() -> void:
@@ -124,13 +180,13 @@ func recieveConversationFrom(vesselId: int) -> void:
 # Recieve Question
 func recieveQuestion(text: String) -> void:
 	state = State.CHATTING_CONTINUE
-	print("Vessel " + str(id) + " recieved question: " + text)
 	recievedQuestion = text
 	requestContinue()
 	
 # Send Question to conversationBuddy
 func sendQuestion(text: String) -> void:
 	if conversationBuddy != null:
+		print("Vessel " + str(id) + " to Vessel " + str(conversationBuddy) + ": " + text)
 		var buddy = server.vessels[conversationBuddy]
 		buddy.recieveQuestion(text)
 	state = State.CHATTING_RECIEVER

@@ -8,9 +8,10 @@ enum VS {
 	CHATTING_RECIEVER,
 	CHATTING_CONTINUE,
 	AT_VENDING_MACHINE,
-	MEETING_NOTURN,
+	MEETING_WAITING,
 	MEETING_TURN,
-	MEETING_END
+	MEETING_FINALSAY,
+	MEETING_VOTE
 }
 
 enum ActionSignal {
@@ -49,7 +50,7 @@ func actionString(what: ActionSignal, subject: String) -> String:
 		ActionSignal.REFILL_VENDING:
 			action = "Refill vending machine"
 		ActionSignal.LOBOTOMY:
-			action = "Get lobotomized"
+			action = "Get lobotomized because of " + subject 
 		ActionSignal.VOTED_OUT:
 			action = "Get voted out"
 		_:
