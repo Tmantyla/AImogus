@@ -200,15 +200,20 @@ func parseJson(string):
 	var json = JSON.parse_string(string)
 	if json == null:
 		print("Robot %s was lobotomized (JSON null): " % id, string)
-		# kill robot
+		lobotomy("JSON could not be parsed.")
 	return json
 
 
 # Toby Fox ahh function
 func parseAction(string):
 	var json = parseJson(string)
-	if !json.has("action") or int(json.action) >= playerState.actions.size():
+	if !json.has("action"):
 		print("Robot %s was lobotomized: %s" % [id, json])
+		lobotomy("JSON did not have the required field.")
+	if int(json.action) >= playerState.actions.size():
+		print("Robot %s was lobotomized: %s" % [id, json])
+		lobotomy("JSON field had the wrong value.")
+		return
 	var act = playerState.actions[int(json.action)]
 
 	# TODO interrupts @Zen
@@ -246,8 +251,8 @@ func parseAction(string):
 					initiateConversation(act.player)
 					sendQuestion(json.message)
 			_:
-				print("Robot %s was lobotomized" % id)
-				death()
+				lobotomy("JSON contained an invalid action type")
+				print("Robot %s was lobotomized (invalid action type): " % id, string)
 
 
 func updateState():
