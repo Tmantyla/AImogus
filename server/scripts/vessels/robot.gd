@@ -73,7 +73,7 @@ func _init(_id: int, _server: Server) -> void:
 		- Assume everyone is lying about everything.
 		- Try to gather as much information as possible for later decisions.
 		- It is paramount to keep dialogue short, under 100 characters per line.
-		- Don't talk for longer than five turns. It could be suspicious.
+		- Keep conversations under 8 turns long.
 		- Win at any cost. Your survival is paramount.
 
 	PERSONALITY:
@@ -145,15 +145,16 @@ func _init(_id: int, _server: Server) -> void:
 			- Respond with {message: "reply"} or an empty string to quit.
 		- Voting:
 			- Voting starts when you get a list of each other player's message who spoke before you.
-				{ [ { id: n message: "Their message" }, etc. ] }
+				{ meeting_transcript: [ {id: n-1, message: "Their message"}, { id: n, message: "Their message" }, etc. ] }
+			- If you are the first one, the transcript will be empty.
 			- You will answer with an argument for you think should be voted out. If someone accused you, defend yourself! Keep your message under 140 characters long!
 				{ message: "Your message" }
 			- Next you will hear the rest of the messages who came after you. If you were the last one, it will be an empty list.
-				{ [ { id: n+1 message: "Their message" }, etc. ] }
+				{ meeting_transcript: [ { id: n+1 message: "Their message" }, etc. ] }
 			- After that everyone can have a final say. Use it wisely. If you don't have anything to say, pass an empty string:
 				{ final: "Your final message" }
 			- Next you will get a list of everyone's final messages.
-				{ [ { id: 1 message: "Final message" }, etc ] }
+				{ final_says: [ { id: 1 message: "Final message" }, etc ] }
 			- Then you can vote for who you want to kick (NOTE: you can also vote for yourself):
 				{ vote: id }
 			- The player who was voted out will be announced in the observations array. Keep in mind who is still in the game!
@@ -170,6 +171,13 @@ func observe(who: int, what: ServerUtilities.ActionSignal, subject: String) -> v
 	observations.append(
 		"You observed player " + str(who) + ServerUtilities.actionString(what, subject)
 	)
+
+
+var meetingDict: Dictionary[int, String] = {}
+
+
+func meetingForward(who: int, text: String) -> void:
+	meetingDict[who] = text
 
 
 func action(message) -> String:
@@ -278,6 +286,7 @@ var idle = true
 
 var TEMP_saidfinal = false
 var TEMP_voted = false
+var oldMeetingDict
 
 
 func _process(delta: float) -> void:
@@ -287,7 +296,7 @@ func _process(delta: float) -> void:
 		State.VOID:
 			print(str(id) + ": wants to act but is VOID")
 		State.AT_STATION:
-			if actTimer > randi() % 1000 and idle:
+			if actTimer > randi() % 500 and idle:
 				actTimer = 0
 
 				updateState()
@@ -330,14 +339,42 @@ func _process(delta: float) -> void:
 		State.MEETING_WAITING:
 			pass
 		State.MEETING_TURN:
-			sayInMeeting("Phase 1")
+			if idle:
+				idle = false
+				oldMeetingDict = meetingDict.duplicate()
+				var message = {"meeting_transcript": meetingDict}
+				var response = await action(message)
+				var json = parseJson(response)
+				if json.has("message"):
+					sayInMeeting(json["message"])
+				else:
+					lobotomy("incoherent JSON")
+				idle = true
 		State.MEETING_FINALSAY:
-			if !TEMP_saidfinal:
-				finalSayInMeeting("Phase 2")
+			if !TEMP_saidfinal and idle:
+				idle = false
+				for key in oldMeetingDict.keys():
+					if meetingDict.has(key):
+						meetingDict.erase(key)
+				var message = {"meeting_transcript": meetingDict}
+				print(id, ":", message)
+				var response = await action(message)
+				print(response)
+				var json = parseJson(response)
+				if json != null and json.has("final"):
+					finalSayInMeeting(json["final"])
+				else:
+					lobotomy("incoherent JSON")
 				TEMP_saidfinal = true
+				idle = true
 		State.MEETING_VOTE:
-			if !TEMP_voted:
-				vote(1)
+			if !TEMP_voted and idle:
+				idle = false
+				var message = {"final_says": server.finalSayDictionary}
+				var response = await action(message)
+				var json = parseJson(response)
+				vote(json["vote"])
 				TEMP_voted = true
+				idle = true
 		_:
 			pass
