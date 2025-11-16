@@ -3,6 +3,7 @@
 ## NOTE: You must provide your own Google API key in `server/scripts/ai_api.gd` for server functionality.
 
 ![](screenshot.png)
+[Watch video here!](https://streamable.com/ua5bdu)
 
 ## Slogan
 An experimental psychological game exploring the boundaries of human-AI behavior through a novel reverse Turing test.
