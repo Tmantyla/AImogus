@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var is_player: bool = false
 @export var move_speed: float = 120.0
 
+var busy = 0
 var character_id := -1
 var target_pos: Vector2 = Vector2.ZERO
 var npc_idle_time := 0.0
@@ -88,8 +89,3 @@ func npc_pick_new_target():
 
 	target_pos = global_position + random_offset
 	npc_timer = npc_wait_time + randf()
-
-func _on_area_2d_body_entered(body: Node2D) -> void:
-	if is_player:
-		PlayerState.station = -1
-		get_tree().change_scene_to_file("res://scenes/gameplay/map.tscn")
