@@ -280,11 +280,12 @@ func handle_message(type: String, payload: Dictionary):
 			# lähetän sulle ne kaikki IDt sitten nii voit käyttää niitä
 			pass
 		_:
-			# Siinä pitäis kai
+			# Siinä pitäis kai olla kaikki
 			pass	
 	
 func send_to_client(peer_id: int, type: String, payload: Dictionary = {}):
 	rpc_id(peer_id, "handle_message", type, payload)
+	
 	print("SERVER SENT TO", peer_id, type, payload)
 
 func _on_peer_connected(peer_id):
