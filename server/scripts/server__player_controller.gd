@@ -159,11 +159,15 @@ func handle_state_input() -> void:
 		#   MEETING (turn speaking)
 		# ===============================
 		State.MEETING_TURN:
+			if answer_mode:
+				return
 			if Input.is_action_just_pressed("ui_accept"):
 				vessel.recieved_commands["speak_at_meeting"] = answer_meeting_phase1
 		
 		# Final say
 		State.MEETING_FINALSAY:
+			if answer_mode:
+				return
 			if Input.is_action_just_pressed("ui_accept"):
 				vessel.recieved_commands["speak_at_meeting"] = answer_meeting_phase2
 
@@ -199,10 +203,10 @@ func _draw() -> void:
 	y += 20
 
 	# ---- Show conversation ----
-	if vessel.recievedQuestion != null:
-		draw_string(ThemeDB.fallback_font, Vector2(10, y + 10), 
-			"Q: " + vessel.recievedQuestion, HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color.GREEN)
+	if vessel.recievedQuestion != null: 
+		draw_string(ThemeDB.fallback_font, Vector2(10, y + 10), "Q: " + vessel.recievedQuestion, HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color.GREEN)
 		y += 40
+
 
 	# ---- Show station vessels ----
 	draw_string(ThemeDB.fallback_font, Vector2(10, y), "Nearby vessels:", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color.WHITE)

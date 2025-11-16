@@ -18,14 +18,14 @@ var stations: Array[Station] = []
 var ai = AiApi.new()
 
 var inMeeting = false
-var timeToNextMeeting: float = 200
+var timeToNextMeeting: float = 40
 var meetingSpeakerIndex = null
 var meetingSpeakerOrder: Array[int] = []
 var meetingPhase = 0
 var finalSayDictionary: Dictionary[int, String] = {}
 var howManyReady = 0
 var voteDictionary: Dictionary[int, int] = {}
-var speaksList: Array[String] = []
+var speaksDictionary: Dictionary[int, String] = {}
 
 var serverPlayerController: ServerPlayerController
 
@@ -125,7 +125,7 @@ func concludeVoting() -> void:
 	howManyReady = 0
 	meetingPhase = 0
 	meetingSpeakerIndex = 0
-	speaksList = []
+	speaksDictionary = {}
 	
 	var vote_counts := {}
 
@@ -167,13 +167,13 @@ func recieveVote(id: int, vote: int):
 	if howManyReady >= meetingSpeakerOrder.size():
 		concludeVoting()
 
-func recieveTalkFromSpeaker(text: String) -> void:
-	speaksList.append(text)
+func recieveTalkFromSpeaker(speakerid: int, text: String) -> void:
+	speaksDictionary[speakerid] = text
 	for client in clientPlayer.keys():
-		send_to_client(client, "meeting_update", { "speaker": currentSpeaker().id, "message": text })
+		send_to_client(client, "meeting_update", { "speaker": speakerid, "message": text })
 	for id in vessels:
-		if id != currentSpeaker().id:
-			vessels[id].meetingForward(currentSpeaker().id, text)
+		if id != speakerid:
+			vessels[id].meetingForward(speakerid, text)
 	if meetingSpeakerIndex != meetingSpeakerOrder.size()-1:
 		meetingSpeakerIndex += 1
 		currentSpeaker().recieveMeetingTurn()
@@ -225,8 +225,9 @@ func _draw() -> void:
 	if GAME_ON:
 		if inMeeting:
 			draw_string(ThemeDB.fallback_font, Vector2(600, 40), "Meeting Ongoing!", HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(0, 1, 1))
-		for i in range(speaksList.size()):
-			draw_string(ThemeDB.fallback_font, Vector2(500, 40 + 20*i), speaksList[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
+		var keys = speaksDictionary.keys()
+		for i in range(keys.size()):
+			draw_string(ThemeDB.fallback_font, Vector2(50, 40 + 20*i), str(keys[i]) +": " + speaksDictionary[keys[i]], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))
 		var fs = finalSayDictionary.values()
 		for i in range(fs.size()):
 			draw_string(ThemeDB.fallback_font, Vector2(600, 40 + 20*i), fs[i], HORIZONTAL_ALIGNMENT_CENTER, -1, ThemeDB.fallback_font_size, Color(1, 1, 0))

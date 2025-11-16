@@ -70,7 +70,7 @@ func finalSayInMeeting(text: String) -> void:
 func sayInMeeting(text: String) -> void:
 	if server.inMeeting and server.meetingPhase == 1:
 		state = State.MEETING_WAITING
-		server.recieveTalkFromSpeaker(text)
+		server.recieveTalkFromSpeaker(id, text)
 
 func vote(vote: int) -> void:
 	server.recieveVote(id, vote)

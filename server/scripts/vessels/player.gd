@@ -47,11 +47,11 @@ func _process(delta: float) -> void:
 				goToVendingMachine()
 		State.CHANGING_STATION:
 			if recieved_commands.has("change_location"):
-				var moveTo = recieved_commands["change_location"]
+				var moveTo = int(recieved_commands["change_location"])
 				var found = false
 				for st in currentPosition.connectedStations:
 					if st.id == moveTo:
-						print("player moving to " + moveTo)
+						print("player moving to " + str(moveTo))
 						changeStation(moveTo)
 						found = true
 				if !found:
